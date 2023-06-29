@@ -18,7 +18,7 @@ app_ui <- function(request) {
       dashboardHeader(
         title = dashboardBrand(
           title = "omicsTools",
-          color = "primary",
+          color = "success",
           href = "#",
           image = "https://cdn-icons-png.flaticon.com/512/3655/3655580.png",
         ),
@@ -27,45 +27,13 @@ app_ui <- function(request) {
         border = TRUE,
         sidebarIcon = icon("bars"),
         controlbarIcon = icon("th"),
-        fixed = FALSE,
-        leftUi = tagList(
-          dropdownMenu(
-            badgeStatus = "info",
-            type = "notifications",
-            notificationItem(
-              inputId = "triggerAction2",
-              text = "Error!",
-              status = "danger"
-            )
-          ),
-          dropdownMenu(
-            badgeStatus = "info",
-            type = "tasks",
-            taskItem(
-              inputId = "triggerAction3",
-              text = "My progress",
-              color = "orange",
-              value = 10
-            )
-          )
-        ),
-        rightUi = dropdownMenu(
-          badgeStatus = "danger",
-          type = "messages",
-          messageItem(
-            inputId = "triggerAction1",
-            message = "message 1",
-            from = "Meth",
-            image = "https://cdn-icons-png.flaticon.com/512/9593/9593070.png",
-            time = "today",
-            color = "lime"
-          )
-        )
+        fixed = FALSE
+
       ),
 # Sidebar -----------------------------------------------------------------
       sidebar = dashboardSidebar(
         skin = "light",
-        status = "primary",
+        status = "success",
         elevation = 3,
         sidebarUserPanel(
           # image = "https://cdn-icons-png.flaticon.com/512/3655/3655580.png",
