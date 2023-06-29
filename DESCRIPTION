@@ -1,7 +1,7 @@
 Package: omicsTools
 Title: Omics Data Process Toolbox
-Version: 1.0.3
-Date: 2023-02-19
+Version: 1.0.4
+Date: 2023-06-29
 Authors@R: c(
     person("Yaoxiang", "Li", , "liyaoxiang@outlook.com", role = c("cre", "aut"),
            comment = c(ORCID = "0000-0001-9200-1016")),

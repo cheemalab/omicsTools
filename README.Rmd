@@ -30,7 +30,7 @@ License: MIT + file LICENSE
 You can install the development version of omicsTools like so:
 
 ``` r
-install.packages("omicsTools")
+devtools::install_github("https://github.com/YaoxiangLi/omicsTools.git")
 ```
 
 ## Example

@@ -21,6 +21,19 @@ This function performs normalization on the input data matrix using
 the loess regression method. Normalization is done based on Quality Control
 (QC) samples in the data.
 }
+\examples{
+
+# Load the CSV data
+data_file <- system.file("extdata", "example2.csv", package = "omicsTools")
+data <- readr::read_csv(data_file)
+# Apply the normalize function
+normalized_data <- omicsTools::normalize(data)
+
+\dontrun{
+# Write the normalized data to a new CSV file
+readr::write_csv(normalized_data, "normalized_data.csv")
+}
+}
 \author{
 Yaoxiang Li \email{yl814@georgetown.edu}
 

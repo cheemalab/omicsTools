@@ -23,6 +23,19 @@ This function performs data cleaning and imputation on a given data matrix.
 It removes blank and NIST samples, features with NA values more than the specified threshold,
 and imputes remaining NA values with half of the smallest non-NA value.
 }
+\examples{
+
+# Load the CSV data
+data_file <- system.file("extdata", "example1.csv", package = "omicsTools")
+data <- readr::read_csv(data_file)
+# Apply the impute function
+imputed_data <- omicsTools::impute(data, percent = 0.2)
+
+\dontrun{
+# Write the imputed data to a new CSV file
+readr::write_csv(imputed_data, "imputed_data.csv")
+}
+}
 \author{
 Yaoxiang Li \email{yl814@georgetown.edu}
 

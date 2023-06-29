@@ -13,7 +13,18 @@
 #'
 #' @return A data frame with the first column as the sample identifiers and
 #' the rest of the columns containing the cleaned and imputed peak intensities.
+#' @examples
 #'
+#' # Load the CSV data
+#' data_file <- system.file("extdata", "example1.csv", package = "omicsTools")
+#' data <- readr::read_csv(data_file)
+#' # Apply the impute function
+#' imputed_data <- omicsTools::impute(data, percent = 0.2)
+#'
+#' \dontrun{
+#' # Write the imputed data to a new CSV file
+#' readr::write_csv(imputed_data, "imputed_data.csv")
+#' }
 #' @importFrom dplyr filter bind_cols
 #' @export
 #' @author Yaoxiang Li \email{yl814@georgetown.edu}
@@ -74,7 +85,18 @@ impute <- function(data, percent = 0.2) {
 #'
 #' @return A data frame with the first column as the sample identifiers and
 #' the rest of the columns containing the normalized peak intensities.
+#' @examples
 #'
+#' # Load the CSV data
+#' data_file <- system.file("extdata", "example2.csv", package = "omicsTools")
+#' data <- readr::read_csv(data_file)
+#' # Apply the normalize function
+#' normalized_data <- omicsTools::normalize(data)
+#'
+#' \dontrun{
+#' # Write the normalized data to a new CSV file
+#' readr::write_csv(normalized_data, "normalized_data.csv")
+#' }
 #' @importFrom stats loess approx
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr bind_cols
@@ -118,3 +140,5 @@ normalize <- function(data) {
   # Combine the sample identifiers with the normalized peaks
   return(dplyr::bind_cols(data[, 1], peaks_normalized))
 }
+
+utils::globalVariables(c("Sample"))
