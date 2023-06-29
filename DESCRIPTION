@@ -1,0 +1,29 @@
+Package: omicsTools
+Title: Omics Data Process Toolbox
+Version: 1.0.3
+Date: 2023-02-19
+Authors@R: c(
+    person("Yaoxiang", "Li", , "liyaoxiang@outlook.com", role = c("cre", "aut"),
+           comment = c(ORCID = "0000-0001-9200-1016")),
+    person("Amrita", "Cheema", , "akc27@georgetown.edu", role = "aut",
+           comment = c(ORCID = "0000-0003-4877-7583"))
+  )
+Description: Processing and analyzing omics data from genomics, transcriptomics, proteomics, and metabolomics platforms. It provides functions for preprocessing, normalization, visualization, and statistical analysis, as well as machine learning algorithms for predictive modeling. 'omicsTools' is an essential tool for researchers working with high-throughput omics data in fields such as biology, bioinformatics, and medicine.
+License: MIT + file LICENSE
+Imports: 
+    bs4Dash,
+    config (>= 0.3.1),
+    dplyr,
+    DT,
+    golem (>= 0.3.5),
+    magrittr,
+    readr,
+    shiny (>= 1.7.2),
+    tibble
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+Suggests: 
+    spelling,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

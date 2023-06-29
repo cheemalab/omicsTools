@@ -1,0 +1,13 @@
+name: omicsTools
+title: omicsTools
+username:
+account: cheema-lab
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8356835
+bundleId: 7224898
+url: https://cheema-lab.shinyapps.io/omicsTools/
+when: 1684248330.97907
+lastSyncTime: 1684248330.97907
+asMultiple: FALSE
+asStatic: FALSE
