@@ -41,5 +41,4 @@ This is a basic example which allows you to start using it:
 library(omicsTools)
 omicsTools::run_app()
 ```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+To keep `README.md` up-to-date. `devtools::build_readme()`

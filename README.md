@@ -25,7 +25,7 @@ License: MIT + file LICENSE
 You can install the development version of omicsTools like so:
 
 ``` r
-install.packages("omicsTools")
+devtools::install_github("https://github.com/YaoxiangLi/omicsTools.git")
 ```
 
 ## Example
@@ -34,10 +34,13 @@ This is a basic example which allows you to start using it:
 
 ``` r
 library(omicsTools)
+#> 
+#> This is omicsTools version 1.0.4.
+#> omicsTools is free software and comes with ABSOLUTELY NO WARRANTY.
+#> Please use at your own risk.
 omicsTools::run_app()
 ```
 
 <div style="width: 100% ; height: 400px ; text-align: center; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;" class="muted well">Shiny applications not supported in static R Markdown documents</div>
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
+To keep `README.md` up-to-date. `devtools::build_readme()`
