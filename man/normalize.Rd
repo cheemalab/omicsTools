@@ -29,9 +29,9 @@ data <- readr::read_csv(data_file)
 # Apply the normalize function
 normalized_data <- omicsTools::normalize(data)
 
-\dontrun{
+\donttest{
 # Write the normalized data to a new CSV file
-readr::write_csv(normalized_data, "normalized_data.csv")
+readr::write_csv(normalized_data, paste0(tempdir(), "/normalized_data.csv"))
 }
 }
 \author{

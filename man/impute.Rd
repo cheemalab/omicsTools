@@ -31,9 +31,9 @@ data <- readr::read_csv(data_file)
 # Apply the impute function
 imputed_data <- omicsTools::impute(data, percent = 0.2)
 
-\dontrun{
+\donttest{
 # Write the imputed data to a new CSV file
-readr::write_csv(imputed_data, "imputed_data.csv")
+readr::write_csv(imputed_data, paste0(tempdir(), "/imputed_data.csv"))
 }
 }
 \author{

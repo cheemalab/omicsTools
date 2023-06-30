@@ -21,9 +21,9 @@
 #' # Apply the impute function
 #' imputed_data <- omicsTools::impute(data, percent = 0.2)
 #'
-#' \dontrun{
+#' \donttest{
 #' # Write the imputed data to a new CSV file
-#' readr::write_csv(imputed_data, "imputed_data.csv")
+#' readr::write_csv(imputed_data, paste0(tempdir(), "/imputed_data.csv"))
 #' }
 #' @importFrom dplyr filter bind_cols
 #' @export
@@ -93,9 +93,9 @@ impute <- function(data, percent = 0.2) {
 #' # Apply the normalize function
 #' normalized_data <- omicsTools::normalize(data)
 #'
-#' \dontrun{
+#' \donttest{
 #' # Write the normalized data to a new CSV file
-#' readr::write_csv(normalized_data, "normalized_data.csv")
+#' readr::write_csv(normalized_data, paste0(tempdir(), "/normalized_data.csv"))
 #' }
 #' @importFrom stats loess approx
 #' @importFrom tibble as_tibble

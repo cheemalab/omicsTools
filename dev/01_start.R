@@ -21,12 +21,13 @@
 golem::fill_desc(
   pkg_name = "omicsTools", # The Name of the package containing the App
   pkg_title = "Omics Data Process Toolbox", # The Title of the package containing the App
-  pkg_description = "Processing and analyzing omics data from genomics, transcriptomics, proteomics, and metabolomics platforms. It provides functions for preprocessing, normalization, visualization, and statistical analysis, as well as machine learning algorithms for predictive modeling. 'omicsTools' is an essential tool for researchers working with high-throughput omics data in fields such as biology, bioinformatics, and medicine.", # The Description of the package containing the App
+  pkg_description = "Processing and analyzing omics data from genomics, transcriptomics, proteomics, and metabolomics platforms. It provides functions for preprocessing, normalization, visualization, and statistical analysis, as well as machine learning algorithms for predictive modeling. 'omicsTools' is an essential tool for researchers working with high-throughput omics data in fields such as biology, bioinformatics, and medicine.The QC-RLSC (quality control–based robust LOESS signal correction) algorithm is used for normalization. Dunn et al. (2011) <doi:10.1038/nprot.2011.335>.", # The Description of the package containing the App
   author_first_name = "Yaoxiang", # Your First Name
   author_last_name = "Li", # Your Last Name
   author_email = "liyaoxiang@outlook.com", # Your Email
   author_orcid = "0000-0001-9200-1016",
-  repo_url = NULL # The URL of the GitHub Repo (optional)
+  pkg_version = "1.0.5",
+  repo_url = "https://github.com/YaoxiangLi/omicsTools" # The URL of the GitHub Repo (optional)
 )
 
 p <- c(person(given = "Yaoxiang",
@@ -34,6 +35,14 @@ p <- c(person(given = "Yaoxiang",
               role = c("cre", "aut"),
               comment = c(ORCID = "0000-0001-9200-1016"),
               email = "liyaoxiang@outlook.com"),
+       person(given = "Zihao",
+              family = "Zhang",
+              role = c("aut"),
+              email = "zz351@georgetown.edu"),
+       person(given = "Meth",
+              family = "Jayatilake",
+              role = c("aut"),
+              email = "mmj61@georgetown.edu"),
        person(given = "Amrita",
               family = "Cheema",
               role = c("aut"),
