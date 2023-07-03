@@ -46,14 +46,40 @@ devtools::install_github("YaoxiangLi/omicsTools")
 
 
 
+## Example of imputation
 
+You can also use the graphical user interface:
+```{r example}
+# Load the CSV data
+data_file <- system.file("extdata", "example1.csv", package = "omicsTools")
+data <- readr::read_csv(data_file)
+# Apply the impute function
+imputed_data <- omicsTools::impute(data, percent = 0.2)
+# Write the imputed data to a new CSV file
+readr::write_csv(imputed_data, paste0(tempdir(), "/imputed_data.csv"))
+```
 
-## Example
+## Example of QC-normalization
 
-This is a basic example which allows you to start using it:
+You can also use the graphical user interface:
 
+```{r example}
+# Load the CSV data
+data_file <- system.file("extdata", "example2.csv", package = "omicsTools")
+data <- readr::read_csv(data_file)
+# Apply the normalize function
+normalized_data <- omicsTools::normalize(data)
+# Write the normalized data to a new CSV file
+readr::write_csv(normalized_data, paste0(tempdir(), "/normalized_data.csv"))
+```
+
+## Example of GUI
+
+You can also use the graphical user interface:
 ```{r example}
 library(omicsTools)
 omicsTools::run_app()
 ```
-To keep `README.md` up-to-date. `devtools::build_readme()`
+
+
+`devtools::build_readme()`
