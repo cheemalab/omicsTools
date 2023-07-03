@@ -24,15 +24,74 @@ License: MIT + file LICENSE
 
 ## Installation
 
-You can install the development version of omicsTools like so:
+### CRAN version
+
+You can install the Stable version of omicsTools like so:
 
 ``` r
-devtools::install_github("https://github.com/YaoxiangLi/omicsTools.git")
+install.packages("omicsTools")
 ```
 
-## Example
+### Development version
 
-This is a basic example which allows you to start using it:
+To get a bug fix, or use a feature from the development version, you can
+install omicsTools from GitHub.
+
+``` r
+if (!require("devtools", quietly = TRUE))
+    install.packages("devtools")
+devtools::install_github("YaoxiangLi/omicsTools")
+```
+
+## Example of imputation
+
+You can also use the graphical user interface:
+
+``` r
+# Load the CSV data
+data_file <- system.file("extdata", "example1.csv", package = "omicsTools")
+data <- readr::read_csv(data_file)
+#> Rows: 85 Columns: 482
+#> ── Column specification ────────────────────────────────────────────────────────
+#> Delimiter: ","
+#> chr   (1): Sample
+#> dbl (414): Urea_pos, Lipoamide_pos, AcetylAmino Sugars_pos, Glycerophosphoch...
+#> lgl  (67): DBQ_pos.IS, Aminolevulinic Acid_pos, Leucine_pos, Homocystine_pos...
+#> 
+#> ℹ Use `spec()` to retrieve the full column specification for this data.
+#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+# Apply the impute function
+imputed_data <- omicsTools::impute(data, percent = 0.2)
+#> 280 features removed by percent of missing values > 0.2
+# Write the imputed data to a new CSV file
+readr::write_csv(imputed_data, paste0(tempdir(), "/imputed_data.csv"))
+```
+
+## Example of QC-normalization
+
+You can also use the graphical user interface:
+
+``` r
+# Load the CSV data
+data_file <- system.file("extdata", "example2.csv", package = "omicsTools")
+data <- readr::read_csv(data_file)
+#> Rows: 63 Columns: 202
+#> ── Column specification ────────────────────────────────────────────────────────
+#> Delimiter: ","
+#> chr   (1): Sample
+#> dbl (201): Urea_pos, Lipoamide_pos, Glycerophosphocholine_pos, Allanoate_pos...
+#> 
+#> ℹ Use `spec()` to retrieve the full column specification for this data.
+#> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+# Apply the normalize function
+normalized_data <- omicsTools::normalize(data)
+# Write the normalized data to a new CSV file
+readr::write_csv(normalized_data, paste0(tempdir(), "/normalized_data.csv"))
+```
+
+## Example of GUI
+
+You can also use the graphical user interface:
 
 ``` r
 library(omicsTools)
@@ -45,4 +104,4 @@ omicsTools::run_app()
 
 <div style="width: 100% ; height: 400px ; text-align: center; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;" class="muted well">Shiny applications not supported in static R Markdown documents</div>
 
-To keep `README.md` up-to-date. `devtools::build_readme()`
+`devtools::build_readme()`
