@@ -27,11 +27,26 @@ License: MIT + file LICENSE
 
 ## Installation
 
-You can install the development version of omicsTools like so:
+### CRAN version
 
-``` r
-devtools::install_github("https://github.com/YaoxiangLi/omicsTools.git")
+You can install the Stable version of omicsTools like so:
+
+```r
+install.packages("omicsTools")
 ```
+
+### Development version
+
+To get a bug fix, or use a feature from the development version, you can install omicsTools from GitHub.
+```r
+if (!require("devtools", quietly = TRUE))
+    install.packages("devtools")
+devtools::install_github("YaoxiangLi/omicsTools")
+```
+
+
+
+
 
 ## Example
 
