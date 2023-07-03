@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/omicsTools)](https://cran.r-project.org/package=omicsTools)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
@@ -35,7 +37,7 @@ This is a basic example which allows you to start using it:
 ``` r
 library(omicsTools)
 #> 
-#> This is omicsTools version 1.0.4.
+#> This is omicsTools version 1.0.5.
 #> omicsTools is free software and comes with ABSOLUTELY NO WARRANTY.
 #> Please use at your own risk.
 omicsTools::run_app()
