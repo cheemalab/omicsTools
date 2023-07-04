@@ -1,3 +1,83 @@
+#' Load and clean peak area data
+#'
+#' @param peak_area_path Character string specifying the path to the peak area data file.
+#' @param delim Character string indicating the delimiter used in the file. Defaults to "\t".
+#' @param na Character vector of strings to be treated as NA. Defaults to c("N/A", "Unknown").
+#' @return A tibble containing the cleaned peak area data.
+load_peak_area <- function(peak_area_path, delim = "\t", na = c("N/A", "Unknown")) {
+  loaded_tibble <- readr::read_delim(file = peak_area_path, delim = delim, na = na)
+  loaded_tibble <- loaded_tibble %>%
+    dplyr::filter(!grepl('Blank', `Sample ID`)) %>%
+    dplyr::filter(!grepl('BLANK', `Sample ID`))
+  return(loaded_tibble)
+}
+
+#' Load and clean IS area data
+#'
+#' @param is_area_path Character string specifying the path to the IS area data file.
+#' @param delim Character string indicating the delimiter used in the file. Defaults to "\t".
+#' @param na Character vector of strings to be treated as NA. Defaults to c("N/A", "Unknown").
+#' @return A tibble containing the cleaned IS area data.
+load_is_area <- function(is_area_path, delim = "\t", na = c("N/A", "Unknown")) {
+  is_tibble <- readr::read_delim(file = is_area_path, delim = delim, na = na)
+  is_tibble <- is_tibble %>%
+    dplyr::filter(!grepl('Blank', `Sample ID`)) %>%
+    dplyr::filter(!grepl('BLANK', `Sample ID`))
+  return(is_tibble)
+}
+
+#' Normalize loaded tibble with IS tibble
+#'
+#' @param loaded_tibble A tibble loaded by 'load_peak_area' or similar function.
+#' @param is_tibble A tibble loaded by 'load_is_area' or similar function.
+#' @return A tibble that is normalized by the IS tibble.
+is_normalize <- function(loaded_tibble, is_tibble) {
+  normalized_tibble <- loaded_tibble[, 4:ncol(loaded_tibble)] /  is_tibble[, 4:ncol(is_tibble)]
+  normalized_tibble <- dplyr::bind_cols(loaded_tibble[, 1:3], normalized_tibble) %>%
+    dplyr::mutate(Sample = paste0(`Sample Name`, "_", `Sample ID`), .before = "Sample Name") %>%
+    dplyr::select(-c("Sample Name", "Sample ID", "Sample Type"))
+  return(normalized_tibble)
+}
+
+#' Calculate the relative standard deviation for QC samples
+#'
+#' @param normalized_tibble A tibble normalized by 'is_normalize' or similar function.
+#' @param qc_name Character string specifying the name of the QC sample. Defaults to "Pooled QC".
+#' @return A tibble containing the mean, standard deviation, and coefficient of variation for QC samples.
+qc_rsd <- function(normalized_tibble, qc_name = "Pooled QC") {
+  qc_tibble <- normalized_tibble %>% dplyr::filter(grepl(qc_name, Sample))
+  df.transposed <- qc_tibble %>%
+    tidyr::pivot_longer(cols= -1) %>%
+    tidyr::pivot_wider(names_from = "Sample",values_from = "value")
+  qc_nm <- colnames(df.transposed)[-1]
+  df.transposed <- df.transposed %>%
+    mutate(Mean = rowMeans(.[qc_nm]),
+           `Standard Deviation` = matrixStats::rowSds(as.matrix(.[qc_nm])),
+           `Coefficient of variation` = `Standard Deviation` / Mean)
+  return(df.transposed)
+}
+
+#' Calculate the relative standard deviation for NIST samples
+#'
+#' @param normalized_tibble A tibble normalized by 'is_normalize' or similar function.
+#' @param nist_name Character string specifying the name of the NIST sample. Defaults to "NIST".
+#' @return A tibble containing the mean, standard deviation, and coefficient of variation for NIST samples.
+nist_rsd <- function(normalized_tibble, nist_name = "NIST") {
+  nist_tibble <- normalized_tibble %>% dplyr::filter(grepl(nist_name, Sample))
+  df.transposed <- nist_tibble %>%
+    tidyr::pivot_longer(cols= -1) %>%
+    tidyr::pivot_wider(names_from = "Sample",values_from = "value")
+  nist_nm <- colnames(df.transposed)[-1]
+  df.transposed <- df.transposed %>%
+    mutate(Mean = rowMeans(.[nist_nm]),
+           `Standard Deviation` = matrixStats::rowSds(as.matrix(.[nist_nm])),
+           `Coefficient of variation` = `Standard Deviation` / Mean)
+  return(df.transposed)
+}
+
+
+
+
 #' Impute function
 #'
 #' This function performs data cleaning and imputation on a given data matrix.
@@ -72,7 +152,7 @@ impute <- function(data, percent = 0.2) {
 
 
 
-#' Normalize function
+#' QC-Normalize function
 #'
 #' This function performs normalization on the input data matrix using
 #' the loess regression method. Normalization is done based on Quality Control
@@ -90,8 +170,8 @@ impute <- function(data, percent = 0.2) {
 #' # Load the CSV data
 #' data_file <- system.file("extdata", "example2.csv", package = "omicsTools")
 #' data <- readr::read_csv(data_file)
-#' # Apply the normalize function
-#' normalized_data <- omicsTools::normalize(data)
+#' # Apply the qc_normalize function
+#' normalized_data <- omicsTools::qc_normalize(data)
 #'
 #' \donttest{
 #' # Write the normalized data to a new CSV file
@@ -106,7 +186,7 @@ impute <- function(data, percent = 0.2) {
 #' Georgetown University, USA
 #'
 #' License: GPL (>= 3)
-normalize <- function(data) {
+qc_normalize <- function(data) {
   # Convert the data except the sample identifiers to a matrix
   peaks <- as.matrix(data[, -1])
 
@@ -142,3 +222,56 @@ normalize <- function(data) {
 }
 
 utils::globalVariables(c("Sample"))
+
+
+# DEMO part ---------------------------------------------------------------
+
+
+
+# Load necessary libraries
+library(magrittr) # Provides pipe operators (%>% and others)
+
+# Define paths to data files
+peak_area_path <- "example/area.txt" # Path to peak area data
+is_area_path <- "example/IS_area.txt" # Path to IS area data
+
+# Load and clean peak area data
+loaded_tibble <- load_peak_area(peak_area_path) # The function load_peak_area reads and cleans the data
+
+# Load and clean IS area data
+is_tibble <- load_is_area(is_area_path) # The function load_is_area reads and cleans the data
+
+# Normalize loaded data with IS data
+normalized_tibble <- is_normalize(loaded_tibble, is_tibble) # The function is_normalize performs normalization
+
+# Calculate the relative standard deviation for QC samples
+qc_rsd_tibble <- qc_rsd(normalized_tibble) # The function qc_rsd calculates relative standard deviation for QC samples
+
+# Calculate the relative standard deviation for NIST samples
+nist_rsd_tibble <- nist_rsd(normalized_tibble) # The function nist_rsd calculates relative standard deviation for NIST samples
+
+#' @examples
+#'
+#' # Load the CSV data
+#' data_file <- system.file("extdata", "example1.csv", package = "omicsTools")
+#' data <- readr::read_csv(data_file)
+#' # Apply the impute function
+#' imputed_data <- omicsTools::impute(data, percent = 0.2)
+#'
+#' \donttest{
+#' # Write the imputed data to a new CSV file
+#' readr::write_csv(imputed_data, paste0(tempdir(), "/imputed_data.csv"))
+#' }
+#'
+#' #' @examples
+#'
+#' # Load the CSV data
+#' data_file <- system.file("extdata", "example1.csv", package = "omicsTools")
+#' data <- readr::read_csv(data_file)
+#' # Apply the impute function
+#' imputed_data <- omicsTools::impute(data, percent = 0.2)
+#'
+#' \donttest{
+#' # Write the imputed data to a new CSV file
+#' readr::write_csv(imputed_data, paste0(tempdir(), "/imputed_data.csv"))
+#' }
