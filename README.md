@@ -20,7 +20,7 @@ algorithms for predictive modeling. omicsTools is an essential tool for
 researchers working with high-throughput omics data in fields such as
 biology, bioinformatics, and medicine.
 
-License: MIT + file LICENSE
+License: AGPL-3.0
 
 ## Installation
 
