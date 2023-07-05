@@ -2,7 +2,12 @@
 
 export("%>%")
 export(impute)
-export(normalize)
+export(is_normalize)
+export(load_is_area)
+export(load_peak_area)
+export(nist_rsd)
+export(qc_normalize)
+export(qc_rsd)
 export(run_app)
 import(dplyr)
 import(shiny)

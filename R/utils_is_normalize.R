@@ -3,7 +3,7 @@
 #' @param loaded_tibble A tibble loaded by 'load_peak_area' or similar function.
 #' @param is_tibble A tibble loaded by 'load_is_area' or similar function.
 #' @return A tibble that is normalized by the IS tibble.
-#' 
+#'
 #' @export
 #' @author Yaoxiang Li \email{yl814@georgetown.edu}
 #'
@@ -17,3 +17,5 @@ is_normalize <- function(loaded_tibble, is_tibble) {
     dplyr::select(-c("Sample Name", "Sample ID", "Sample Type"))
   return(normalized_tibble)
 }
+
+utils::globalVariables(c("Sample", "Sample ID", "Sample Name"))

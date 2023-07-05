@@ -1,10 +1,10 @@
 #' Load and clean peak area data
 #'
 #' @param peak_area_path Character string specifying the path to the peak area data file.
-#' @param delim Character string indicating the delimiter used in the file. Defaults to "\t".
+#' @param delim Character string indicating the delimiter used in the file.
 #' @param na Character vector of strings to be treated as NA. Defaults to c("N/A", "Unknown").
 #' @return A tibble containing the cleaned peak area data.
-#' 
+#'
 #' @export
 #' @author Yaoxiang Li \email{yl814@georgetown.edu}
 #'
@@ -18,3 +18,5 @@ load_peak_area <- function(peak_area_path, delim = "\t", na = c("N/A", "Unknown"
     dplyr::filter(!grepl('BLANK', `Sample ID`))
   return(loaded_tibble)
 }
+
+utils::globalVariables(c("Sample ID"))

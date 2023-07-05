@@ -84,27 +84,10 @@ data <- readr::read_csv(data_file)
 #> ℹ Use `spec()` to retrieve the full column specification for this data.
 #> ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 # Apply the normalize function
-normalized_data <- omicsTools::normalize(data)
+normalized_data <- omicsTools::qc_normalize(data)
 # Write the normalized data to a new CSV file
 readr::write_csv(normalized_data, paste0(tempdir(), "/normalized_data.csv"))
 ```
-
-## Example of GUI
-
-You can also use the graphical user interface:
-
-``` r
-library(omicsTools)
-#> 
-#> This is omicsTools version 1.0.5.
-#> omicsTools is free software and comes with ABSOLUTELY NO WARRANTY.
-#> Please use at your own risk.
-omicsTools::run_app()
-```
-
-<div style="width: 100% ; height: 400px ; text-align: center; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;" class="muted well">Shiny applications not supported in static R Markdown documents</div>
-
-`devtools::build_readme()`
 
 ### Code style
 

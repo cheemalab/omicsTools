@@ -3,7 +3,7 @@
 #' @param normalized_tibble A tibble normalized by 'is_normalize' or similar function.
 #' @param nist_name Character string specifying the name of the NIST sample. Defaults to "NIST".
 #' @return A tibble containing the mean, standard deviation, and coefficient of variation for NIST samples.
-#' 
+#'
 #' @export
 #' @author Yaoxiang Li \email{yl814@georgetown.edu}
 #'
@@ -22,3 +22,6 @@ nist_rsd <- function(normalized_tibble, nist_name = "NIST") {
            `Coefficient of variation` = `Standard Deviation` / Mean)
   return(df.transposed)
 }
+
+
+utils::globalVariables(c(".", "Standard Deviation", "Mean"))

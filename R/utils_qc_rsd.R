@@ -3,7 +3,7 @@
 #' @param normalized_tibble A tibble normalized by 'is_normalize' or similar function.
 #' @param qc_name Character string specifying the name of the QC sample. Defaults to "Pooled QC".
 #' @return A tibble containing the mean, standard deviation, and coefficient of variation for QC samples.
-#' 
+#'
 #' @export
 #' @author Yaoxiang Li \email{yl814@georgetown.edu}
 #'
@@ -22,3 +22,5 @@ qc_rsd <- function(normalized_tibble, qc_name = "Pooled QC") {
            `Coefficient of variation` = `Standard Deviation` / Mean)
   return(df.transposed)
 }
+
+utils::globalVariables(c(".", "Standard Deviation", "Mean"))
