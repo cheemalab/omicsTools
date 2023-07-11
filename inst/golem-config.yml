@@ -1,6 +1,6 @@
 default:
   golem_name: omicsTools
-  golem_version: 1.0.6
+  golem_version: 1.0.7
   app_prod: no
 production:
   app_prod: yes

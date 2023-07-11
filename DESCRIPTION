@@ -1,8 +1,16 @@
 Package: omicsTools
 Title: Omics Data Process Toolbox
-Version: 1.0.6
+Version: 1.0.7
 Date: 2023-07-04
-Authors@R: person('Yaoxiang', 'Li', email = 'liyaoxiang@outlook.com', role = c('cre', 'aut'), comment = c(ORCID = '0000-0001-9200-1016'))
+Authors@R: c(
+    person("Yaoxiang", "Li", , "liyaoxiang@outlook.com", role = c("cre", "aut"),
+           comment = c(ORCID = "0000-0001-9200-1016")),
+    person("Meth", "Jayatilake", , "mmj61@georgetown.edu", role = "aut",
+           comment = c(ORCID = "0000-0002-5780-9391")),
+    person("Zihao", "Zhang", , "zz351@georgetown.edu", role = "aut"),
+    person("Amrita", "Cheema", , "akc27@georgetown.edu", role = "aut",
+           comment = c(ORCID = "0000-0003-4877-7583"))
+  )
 Description: Processing and analyzing omics data from genomics, transcriptomics, proteomics, and metabolomics platforms. It provides functions for preprocessing, normalization, visualization, and statistical analysis, as well as machine learning algorithms for predictive modeling. 'omicsTools' is an essential tool for researchers working with high-throughput omics data in fields such as biology, bioinformatics, and medicine.The QC-RLSC (quality control–based robust LOESS signal correction) algorithm is used for normalization. Dunn et al. (2011) <doi:10.1038/nprot.2011.335>.
 License: AGPL (>= 3)
 Imports: 
