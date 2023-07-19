@@ -40,7 +40,7 @@ install omicsTools from GitHub.
 ``` r
 if (!require("devtools", quietly = TRUE))
     install.packages("devtools")
-devtools::install_github("YaoxiangLi/omicsTools")
+devtools::install_github("cheemalab/omicsTools")
 ```
 
 ## Example of imputation
