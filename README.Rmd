@@ -41,7 +41,7 @@ To get a bug fix, or use a feature from the development version, you can install
 ```r
 if (!require("devtools", quietly = TRUE))
     install.packages("devtools")
-devtools::install_github("YaoxiangLi/omicsTools")
+devtools::install_github("cheemalab/omicsTools")
 ```
 
 
