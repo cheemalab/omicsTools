@@ -76,6 +76,8 @@ usethis::use_package("bs4Dash")
 usethis::use_package("shinymanager")
 usethis::use_package("matrixStats")
 usethis::use_package("tidyr")
+usethis::use_package("pcva")
+usethis::use_package("ggplot2")
 
 usethis::use_package("spelling", type = "Suggests")
 usethis::use_pipe(export = TRUE)
