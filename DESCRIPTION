@@ -1,6 +1,6 @@
 Package: omicsTools
 Title: Omics Data Process Toolbox
-Version: 1.0.7
+Version: 1.0.8
 Date: 2023-07-04
 Authors@R: c(
     person("Yaoxiang", "Li", , "liyaoxiang@outlook.com", role = c("cre", "aut"),
