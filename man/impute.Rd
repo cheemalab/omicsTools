@@ -4,7 +4,7 @@
 \alias{impute}
 \title{Impute function}
 \usage{
-impute(data, percent = 0.2)
+impute(data, percent = 0.2, .remove_nist = TRUE)
 }
 \arguments{
 \item{data}{A data frame containing the sample data. The first column should contain
