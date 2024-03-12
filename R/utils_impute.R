@@ -32,12 +32,16 @@
 #' Georgetown University, USA
 #'
 #' License: GPL (>= 3)
-impute <- function(data, percent = 0.2) {
+impute <- function(data, percent = 0.2, .remove_nist = TRUE) {
 
   # Filter out Blank and NIST samples
   data <- data %>% dplyr::filter(!grepl('Blank', Sample))
   data <- data %>% dplyr::filter(!grepl('BLANK', Sample))
-  data <- data %>% dplyr::filter(!grepl('NIST', Sample))
+
+
+  if (.remove_nist) {
+      data <- data %>% dplyr::filter(!grepl('NIST', Sample))
+  }
 
   # Convert the data except the sample identifiers to a matrix
   peaks <- as.matrix(data[, -1])
