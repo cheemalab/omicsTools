@@ -5,6 +5,7 @@
 #' (QC) samples in the data.
 #'
 #' @param data A data frame containing the sample data. The first column
+#' @param qc_label A string indicating the string
 #' should contain the sample identifiers, and the rest of the columns
 #' contain the peaks to be normalized. QC samples should be indicated
 #' in the sample identifiers with 'QC'.
@@ -32,13 +33,13 @@
 #' Georgetown University, USA
 #'
 #' License: GPL (>= 3)
-qc_normalize <- function(data) {
+qc_normalize <- function(data, qc_label = "QC") {
   # Convert the data except the sample identifiers to a matrix
   peaks <- as.matrix(data[, -1])
 
   # Create a vector to index QC samples
   qc_idx <- rep(0, nrow(peaks))
-  qc_idx[grep("QC", data$Sample)] <- 1
+  qc_idx[grep(qc_label, data$Sample)] <- 1
 
   # Create a sequence for the acquisition order
   acq_seq <- 1:nrow(peaks)

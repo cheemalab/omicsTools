@@ -4,10 +4,12 @@
 \alias{qc_normalize}
 \title{QC-Normalize function}
 \usage{
-qc_normalize(data)
+qc_normalize(data, qc_label = "QC")
 }
 \arguments{
-\item{data}{A data frame containing the sample data. The first column
+\item{data}{A data frame containing the sample data. The first column}
+
+\item{qc_label}{A string indicating the string
 should contain the sample identifiers, and the rest of the columns
 contain the peaks to be normalized. QC samples should be indicated
 in the sample identifiers with 'QC'.}

@@ -26,7 +26,7 @@ golem::fill_desc(
   author_last_name = "Li", # Your Last Name
   author_email = "liyaoxiang@outlook.com", # Your Email
   author_orcid = "0000-0001-9200-1016",
-  pkg_version = "1.0.9",
+  pkg_version = "1.1.0",
   repo_url = "https://github.com/YaoxiangLi/omicsTools" # The URL of the GitHub Repo (optional)
 )
 
