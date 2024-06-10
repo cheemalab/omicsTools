@@ -26,7 +26,7 @@ golem::fill_desc(
   author_last_name = "Li", # Your Last Name
   author_email = "liyaoxiang@outlook.com", # Your Email
   author_orcid = "0000-0001-9200-1016",
-  pkg_version = "1.1.1",
+  pkg_version = "1.1.2",
   repo_url = "https://github.com/YaoxiangLi/omicsTools" # The URL of the GitHub Repo (optional)
 )
 
@@ -81,6 +81,20 @@ usethis::use_package("ggplot2")
 
 usethis::use_package("spelling", type = "Suggests")
 usethis::use_pipe(export = TRUE)
+
+
+## dependencies for utils_features
+usethis::use_package("moments")
+usethis::use_package("outliers")
+usethis::use_package("MASS")
+usethis::use_package("dplyr")
+usethis::use_package("dbscan")
+usethis::use_package("ggplot2")
+usethis::use_package("UpSetR")
+usethis::use_package("tidyr")
+usethis::use_package("cli")
+usethis::use_package("progress")
+
 
 ## Use git ----
 usethis::use_git()
