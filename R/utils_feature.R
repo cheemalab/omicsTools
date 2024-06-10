@@ -1,15 +1,3 @@
-# Load necessary packages
-#' @import moments
-#' @import outliers
-#' @import MASS
-#' @import dplyr
-#' @import dbscan
-#' @import ggplot2
-#' @import UpSetR
-#' @import tidyr
-#' @import cli
-#' @import progress
-
 #' Calculate Cook's Distance
 #'
 #' @param values A numeric vector of values for which to calculate Cook's Distance.
@@ -42,12 +30,12 @@ calculate_lof <- function(values, k = 5) {
 #' Generate High-Dimensional Data with Anomalies
 #'
 #' @param n_samples The number of samples to generate. Defaults to 100.
-#' @param n_features The number of features to generate. Defaults to 200.
+#' @param n_features The number of features to generate. Defaults to 2000.
 #' @return A data frame containing the generated data with anomalies.
 #' @export
 #' @examples
 #' data <- generate_data_with_anomalies()
-generate_data_with_anomalies <- function(n_samples = 100, n_features = 200) {
+generate_data_with_anomalies <- function(n_samples = 100, n_features = 2000) {
   cli::cli_h1("Generating High-Dimensional Data with Anomalies")
 
   set.seed(123)
