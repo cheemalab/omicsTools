@@ -18,6 +18,7 @@ A tibble with filtered features and imputed missing values.
 }
 \description{
 This function filters features based on a missing value threshold and imputes missing values using various methods.
+It provides an interactive experience with CLI emojis and progress bars.
 }
 \examples{
 data <- tibble::tibble(
