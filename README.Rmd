@@ -48,16 +48,17 @@ devtools::install_github("cheemalab/omicsTools")
 
 ## Example of imputation
 
-You can also use the graphical user interface:
 ```{r}
 # Load the CSV data
 data_file <- system.file("extdata", "example1.csv", package = "omicsTools")
 data <- readr::read_csv(data_file)
 # Apply the impute function
-imputed_data <- omicsTools::impute(data, percent = 0.2)
+imputed_data <- omicsTools::handle_missing_values(data, percent = 0.2)
 # Write the imputed data to a new CSV file
 readr::write_csv(imputed_data, paste0(tempdir(), "/imputed_data.csv"))
 ```
+
+You can also use the graphical user interface:
 
 ## Example of QC-normalization
 
