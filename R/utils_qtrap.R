@@ -184,7 +184,8 @@ process_mrm_duplicates <- function(mrm_data, sample_name_col = "Sample Name", sa
 #' print(is_area_data)
 #' }
 #' @export
-#' @import dplyr tidyr metan
+#' @import dplyr tidyr
+#' @importFrom metan transpose_df
 #' @author Yaoxiang Li
 convert_mrm_data <- function(data, response_col, sample_name_col = "Sample Name", sample_id_col = "Sample ID", component_name_col = "Component Name") {
   wide_data <- data |>
