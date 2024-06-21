@@ -12,6 +12,11 @@
 #' area_txt <- read.delim("path/to/area.txt", check.names = FALSE)
 #' check_and_sort_columns(area_data, area_txt)
 #' }
+#' @export
+#' @import dplyr cli tibble
+#' @importFrom utils read.delim
+#' @importFrom rlang .data
+#' @author Yaoxiang Li
 check_and_sort_columns <- function(area_data, area_txt) {
   selected_columns <- colnames(area_txt)
   area_data <- dplyr::select(area_data, dplyr::all_of(selected_columns))
@@ -36,7 +41,6 @@ check_and_sort_columns <- function(area_data, area_txt) {
     cli::cli_alert_danger("The tibbles do not have the same column names.")
   }
 }
-
 
 #' Detect Duplicate MRM Transitions
 #'
@@ -66,9 +70,12 @@ check_and_sort_columns <- function(area_data, area_txt) {
 #' )
 #' detect_duplicates(sample_data, "Polarity", "Retention Time", "Mass Info", "Component Name")
 #' }
+#' @export
+#' @import dplyr tibble
+#' @importFrom rlang sym
+#' @author Yaoxiang Li
 detect_duplicates <- function(data, polarity_col = "Polarity", retention_time_col = "Retention Time", mass_info_col = "Mass Info", component_name_col = "Component Name") {
   data <- dplyr::mutate(data, MRM_Duplicate_Flag = "")
-
 
   for (i in 1:nrow(data)) {
     current_row <- data[i, ]
@@ -113,6 +120,9 @@ detect_duplicates <- function(data, polarity_col = "Polarity", retention_time_co
 #' processed_data <- process_mrm_duplicates(mrm_data, "Sample Name", "Sample ID", "Polarity", "Retention Time", "Mass Info", "Component Name")
 #' print(processed_data)
 #' }
+#' @export
+#' @import dplyr cli
+#' @author Yaoxiang Li
 process_mrm_duplicates <- function(mrm_data, sample_name_col = "Sample Name", sample_id_col = "Sample ID", polarity_col = "Polarity", retention_time_col = "Retention Time", mass_info_col = "Mass Info", component_name_col = "Component Name") {
   # Add sample_id column to mrm_data
   mrm_data <- mrm_data |>
@@ -173,6 +183,9 @@ process_mrm_duplicates <- function(mrm_data, sample_name_col = "Sample Name", sa
 #' print(area_data)
 #' print(is_area_data)
 #' }
+#' @export
+#' @import dplyr tidyr metan
+#' @author Yaoxiang Li
 convert_mrm_data <- function(data, response_col, sample_name_col = "Sample Name", sample_id_col = "Sample ID", component_name_col = "Component Name") {
   wide_data <- data |>
     dplyr::transmute(
@@ -186,7 +199,6 @@ convert_mrm_data <- function(data, response_col, sample_name_col = "Sample Name"
 
   return(wide_data)
 }
-
 
 #' Flag Overexpressed Features in Blank Samples
 #'
@@ -213,6 +225,10 @@ convert_mrm_data <- function(data, response_col, sample_name_col = "Sample Name"
 #' flagged_data <- flag_blank_overexpressed(area_data, sample_id_col = "sample_id", feature_cols = names(area_data)[-1])
 #' print(flagged_data)
 #' }
+#' @export
+#' @import dplyr
+#' @importFrom rlang .data
+#' @author Yaoxiang Li
 flag_blank_overexpressed <- function(data, sample_id_col = "sample_id", feature_cols, threshold = 10) {
   # First blank sample
   first_blank <- dplyr::filter(data, grepl("Blank", !!dplyr::sym(sample_id_col))) |> dplyr::slice(1)
@@ -253,20 +269,22 @@ flag_blank_overexpressed <- function(data, sample_id_col = "sample_id", feature_
 #' combined_data <- combine_flagged_data(flagged_area_data, flagged_height_data, "sample_id")
 #' print(combined_data)
 #' }
+#' @export
+#' @import dplyr
+#' @author Yaoxiang Li
 combine_flagged_data <- function(flagged_area, flagged_height, sample_id_col = "sample_id") {
   # Ensure the sample IDs and feature columns are aligned
   stopifnot(identical(flagged_area[[sample_id_col]], flagged_height[[sample_id_col]]))
   feature_cols <- setdiff(names(flagged_area), sample_id_col)
   stopifnot(identical(feature_cols, setdiff(names(flagged_height), sample_id_col)))
-  
+
   # Combine the data using a union set rule
   combined <- flagged_area
   for (col in feature_cols) {
     combined[[col]] <- dplyr::if_else(flagged_area[[col]] == "Too high in Blank" | flagged_height[[col]] == "Too high in Blank",
-                                      "Too high in Blank", "")
+      "Too high in Blank", ""
+    )
   }
-  
+
   return(combined)
 }
-
-

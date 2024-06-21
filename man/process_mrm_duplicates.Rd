@@ -50,3 +50,6 @@ processed_data <- process_mrm_duplicates(mrm_data, "Sample Name", "Sample ID", "
 print(processed_data)
 }
 }
+\author{
+Yaoxiang Li
+}

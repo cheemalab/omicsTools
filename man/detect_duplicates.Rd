@@ -48,3 +48,6 @@ sample_data <- tibble::tribble(
 detect_duplicates(sample_data, "Polarity", "Retention Time", "Mass Info", "Component Name")
 }
 }
+\author{
+Yaoxiang Li
+}

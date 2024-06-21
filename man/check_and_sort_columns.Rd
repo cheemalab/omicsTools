@@ -25,3 +25,6 @@ area_txt <- read.delim("path/to/area.txt", check.names = FALSE)
 check_and_sort_columns(area_data, area_txt)
 }
 }
+\author{
+Yaoxiang Li
+}

@@ -27,3 +27,6 @@ combined_data <- combine_flagged_data(flagged_area_data, flagged_height_data, "s
 print(combined_data)
 }
 }
+\author{
+Yaoxiang Li
+}
