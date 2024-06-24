@@ -282,8 +282,8 @@ combine_flagged_data <- function(flagged_area, flagged_height, sample_id_col = "
   # Combine the data using a union set rule
   combined <- flagged_area
   for (col in feature_cols) {
-    combined[[col]] <- dplyr::if_else(flagged_area[[col]] == "Too high in Blank" | flagged_height[[col]] == "Too high in Blank",
-      "Too high in Blank", ""
+    combined[[col]] <- dplyr::if_else(flagged_area[[col]] == TRUE | flagged_height[[col]] == TRUE,
+                                      TRUE, FALSE
     )
   }
 
