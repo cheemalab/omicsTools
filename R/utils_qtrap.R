@@ -201,17 +201,18 @@ convert_mrm_data <- function(data, response_col, sample_name_col = "Sample Name"
   return(wide_data)
 }
 
-#' Flag Overexpressed Features in Blank Samples
+#' Flag Underexpressed Features in Samples Based on Blank Samples
 #'
-#' Flags features that are too abundant in blank samples. If a feature is NA in the first blank sample, it is acceptable.
-#' Otherwise, for each sample and feature, the peak area must be at least 10 times the mean area for the same transition in the first blank sample.
+#' Flags features in samples based on their abundance in blank samples. If a feature is NA in the first blank sample,
+#' all samples for this feature are marked as TRUE. Otherwise, for each sample and feature, if the peak area is at least
+#' 10 times the area of the first blank sample, it is marked as TRUE, else FALSE.
 #'
 #' @param data A tibble containing the MRM transition data.
 #' @param sample_id_col Name of the column containing sample ID information.
 #' @param feature_cols A vector of column names representing the features.
 #' @param threshold A numeric value representing the threshold multiplier (default is 10).
 #' @return A tibble with the same dimensions and column names as the input data,
-#'         containing an empty string if not flagged or "Too high in Blank" if flagged.
+#'         containing TRUE or FALSE based on the criteria.
 #' @examples
 #' \dontrun{
 #' area_data <- tibble::tibble(
@@ -223,37 +224,33 @@ convert_mrm_data <- function(data, response_col, sample_name_col = "Sample Name"
 #'   `2-Oxoisoleucine_neg` = c(NA, 53004.06, 124669.80, NA, 23650.90, 118364.36, 62745.31, 73367.63),
 #'   `3-(4-Hydroxyphenyl)propionate_neg` = c(NA, 53004.06, 124669.80, NA, 23650.90, 118364.36, 62745.31, 73367.63)
 #' )
-#' flagged_data <- flag_blank_overexpressed(area_data, sample_id_col = "sample_id", feature_cols = names(area_data)[-1])
+#' flagged_data <- flag_underexpressed_features(area_data, sample_id_col = "sample_id", feature_cols = names(area_data)[-1])
 #' print(flagged_data)
 #' }
 #' @export
 #' @import dplyr
 #' @importFrom rlang .data
 #' @author Yaoxiang Li
-flag_blank_overexpressed <- function(data, sample_id_col = "sample_id", feature_cols, threshold = 10) {
+flag_underexpressed_features <- function(data, sample_id_col = "sample_id", feature_cols, threshold = 10) {
   # First blank sample
   first_blank <- dplyr::filter(data, grepl("Blank", !!dplyr::sym(sample_id_col))) |> dplyr::slice(1)
-  blank_means <- first_blank |> dplyr::summarise(dplyr::across(dplyr::all_of(feature_cols), ~ mean(.x, na.rm = TRUE)))
 
   # Flag features
   flagged <- data |>
     dplyr::rowwise() |>
     dplyr::mutate(dplyr::across(dplyr::all_of(feature_cols),
-      ~ dplyr::if_else(is.na(blank_means[[dplyr::cur_column()]]), "",
-        dplyr::if_else(.x < threshold * blank_means[[dplyr::cur_column()]], "Too high in Blank", "")
-      ),
-      .names = "{col}"
+                                ~ dplyr::if_else(is.na(first_blank[[dplyr::cur_column()]]), TRUE,
+                                                 dplyr::if_else(.x >= threshold * first_blank[[dplyr::cur_column()]], TRUE, FALSE)
+                                ),
+                                .names = "{col}"
     )) |>
     dplyr::ungroup()
-
-  # Clear flags in first blank sample
-  flags <- names(flagged)[names(flagged) %in% feature_cols]
-  flagged[flagged[[sample_id_col]] == first_blank[[sample_id_col]][1], flags] <- ""
 
   # Output flagged features with sample_id
   result <- dplyr::select(flagged, !!dplyr::sym(sample_id_col), dplyr::all_of(feature_cols))
   return(result)
 }
+
 
 #' Combine Flagged Area and Height Data
 #'
