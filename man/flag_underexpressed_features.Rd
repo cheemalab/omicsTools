@@ -22,12 +22,12 @@ flag_underexpressed_features(
 }
 \value{
 A tibble with the same dimensions and column names as the input data,
-        containing TRUE or FALSE based on the criteria.
+        containing TRUE, FALSE, or NA based on the criteria.
 }
 \description{
 Flags features in samples based on their abundance in blank samples. If a feature is NA in the first blank sample,
 all samples for this feature are marked as TRUE. Otherwise, for each sample and feature, if the peak area is at least
-10 times the area of the first blank sample, it is marked as TRUE, else FALSE.
+10 times the area of the first blank sample, it is marked as TRUE, else FALSE. NA values in the samples remain unchanged.
 }
 \examples{
 \dontrun{
