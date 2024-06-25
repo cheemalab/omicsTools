@@ -26,7 +26,7 @@ golem::fill_desc(
   author_last_name = "Li", # Your Last Name
   author_email = "liyaoxiang@outlook.com", # Your Email
   author_orcid = "0000-0001-9200-1016",
-  pkg_version = "1.1.2",
+  pkg_version = "1.1.3",
   repo_url = "https://github.com/YaoxiangLi/omicsTools" # The URL of the GitHub Repo (optional)
 )
 
@@ -93,7 +93,7 @@ usethis::use_package("ggplot2")
 usethis::use_package("UpSetR")
 usethis::use_package("tidyr")
 usethis::use_package("cli")
-usethis::use_package("progress")
+usethis::use_package("progress") # consider remove this
 
 
 ## Use git ----

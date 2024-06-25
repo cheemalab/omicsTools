@@ -44,8 +44,7 @@ mrm_data <- tibble::tribble(
   "Sample1", "ID1", "Positive", 1.95, "61.0 / 44.0", "Urea_pos",
   "Sample1", "ID1", "Positive", 8.34, "206.0 / 189.0", "Lipoamide_pos",
   "Sample2", "ID2", "Positive", 2.18, "339.1 / 110.0", "AICAR_pos",
-  "Sample2", "ID2", "Positive", 1.76, "175.1 / 70.0", "Arginine_pos"
-)
+  "Sample2", "ID2", "Positive", 1.76, "175.1 / 70.0", "Arginine_pos")
 processed_data <- process_mrm_duplicates(mrm_data, "data_filename", "sample_id", "polarity", "retention_time", "Mass Info", "component_name")
 print(processed_data)
 }

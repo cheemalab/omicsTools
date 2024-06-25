@@ -115,8 +115,7 @@ detect_duplicates <- function(data, polarity_col = "polarity", retention_time_co
 #'   "Sample1", "ID1", "Positive", 1.95, "61.0 / 44.0", "Urea_pos",
 #'   "Sample1", "ID1", "Positive", 8.34, "206.0 / 189.0", "Lipoamide_pos",
 #'   "Sample2", "ID2", "Positive", 2.18, "339.1 / 110.0", "AICAR_pos",
-#'   "Sample2", "ID2", "Positive", 1.76, "175.1 / 70.0", "Arginine_pos"
-#' )
+#'   "Sample2", "ID2", "Positive", 1.76, "175.1 / 70.0", "Arginine_pos")
 #' processed_data <- process_mrm_duplicates(mrm_data, "data_filename", "sample_id", "polarity", "retention_time", "Mass Info", "component_name")
 #' print(processed_data)
 #' }
@@ -252,7 +251,6 @@ flag_underexpressed_features <- function(data, sample_id_col = "sample_id", feat
   result <- dplyr::select(flagged, !!dplyr::sym(sample_id_col), dplyr::all_of(feature_cols))
   return(result)
 }
-
 
 
 #' Combine Multiple Logical Tibbles with Intersection or Union

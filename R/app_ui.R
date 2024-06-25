@@ -108,9 +108,9 @@ app_ui <- function(request) {
       footer = dashboardFooter(
         left = a(
           href = "#",
-          target = "_blank", "Unpublished tools created by Yaoxiang Li. All rights reserved."
+          target = "_blank", "Unpublished tools created by Yaoxiang Li in Cheema Lab. All rights reserved."
         ),
-        right = "2023"
+        right = "©2024"
       ),
 # Body --------------------------------------------------------------------
       body = dashboardBody(
