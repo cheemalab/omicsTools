@@ -13,7 +13,7 @@ load_parse_sciex_txt(
 )
 }
 \arguments{
-\item{file_path}{Filepath of the input text file of a complete output of the
+\item{file_path}{File path of the input text file of a complete output of the
 SCIEX OS results from a sequence. File should be tab-delimited and in the
 'long' format.}
 
@@ -58,9 +58,10 @@ Load and Parse SCIEX OS Exported LC-MRM-MS2 Data
 \examples{
 \dontrun{
 data(sciex_mrm_ms_data)
-data_tbl <- load_parse_sciex_txt(
+data_tibble <- load_parse_sciex_txt(
   file_path = "path/to/file.txt",
   return_all_columns = FALSE,
   check_negative_values = TRUE
-)}
+)
+}
 }

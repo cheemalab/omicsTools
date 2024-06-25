@@ -239,12 +239,12 @@ flag_underexpressed_features <- function(data, sample_id_col = "sample_id", feat
   flagged <- data |>
     dplyr::rowwise() |>
     dplyr::mutate(dplyr::across(dplyr::all_of(feature_cols),
-                                ~ dplyr::if_else(is.na(.x), NA,
-                                                 dplyr::if_else(is.na(first_blank[[dplyr::cur_column()]]), TRUE,
-                                                                dplyr::if_else(.x >= threshold * first_blank[[dplyr::cur_column()]], TRUE, FALSE)
-                                                 )
-                                ),
-                                .names = "{col}"
+      ~ dplyr::if_else(is.na(.x), NA,
+        dplyr::if_else(is.na(first_blank[[dplyr::cur_column()]]), TRUE,
+          dplyr::if_else(.x >= threshold * first_blank[[dplyr::cur_column()]], TRUE, FALSE)
+        )
+      ),
+      .names = "{col}"
     )) |>
     dplyr::ungroup()
 
@@ -319,7 +319,7 @@ combine_logical_tibbles <- function(..., method = c("intersection", "union")) {
 
 #' Load and Parse SCIEX OS Exported LC-MRM-MS2 Data
 #'
-#' @param file_path Filepath of the input text file of a complete output of the
+#' @param file_path File path of the input text file of a complete output of the
 #' SCIEX OS results from a sequence. File should be tab-delimited and in the
 #' 'long' format.
 #' @param input_data Input tibble of raw SCIEX (pre-parsing) text file. If `NULL`
@@ -357,23 +357,24 @@ combine_logical_tibbles <- function(..., method = c("intersection", "union")) {
 #' @examples
 #' \dontrun{
 #' data(sciex_mrm_ms_data)
-#' data_tbl <- load_parse_sciex_txt(
+#' data_tibble <- load_parse_sciex_txt(
 #'   file_path = "path/to/file.txt",
 #'   return_all_columns = FALSE,
 #'   check_negative_values = TRUE
-#' )}
+#' )
+#' }
 load_parse_sciex_txt <- function(file_path, input_data = NULL, return_all_columns = TRUE,
                                  check_negative_values = TRUE, fix_istds = TRUE) {
   cli::cli_progress_bar("Reading data", total = 5)
 
   if (is.null(input_data)) {
     cli::cli_alert_info("Loading data from file")
-    input_data <- readr::read_tsv(file_path, na = c("N/A", ""))
+    input_data <- readr::read_tsv(file_path, na = c("N/A", "NA", ""))
   }
   cli::cli_progress_update()
 
   cli::cli_alert_info("Renaming columns")
-  input_data <- input_data %>%
+  input_data <- input_data |>
     dplyr::rename(
       component_name = `Component Name`,
       component_idx = `Component Index`,
@@ -425,7 +426,7 @@ load_parse_sciex_txt <- function(file_path, input_data = NULL, return_all_column
       asymmetry_factor = `Asymmetry Factor`,
       points_across_baseline = `Points Across Baseline`,
       points_across_fwhm = `Points Across Half Height`
-    ) %>%
+    ) |>
     dplyr::mutate(
       polarity = tolower(polarity),
       precursor_mz = as.numeric(precursor_mz),
@@ -435,20 +436,21 @@ load_parse_sciex_txt <- function(file_path, input_data = NULL, return_all_column
 
   if (fix_istds) {
     cli::cli_alert_info("Fixing internal standards")
-    int_stds <- input_data %>%
-      dplyr::filter(is_istd == TRUE) %>%
-      dplyr::pull(component_name) %>%
+    int_stds <- input_data |>
+      dplyr::filter(is_istd == TRUE) |>
+      dplyr::pull(component_name) |>
       unique()
 
-    potential_istds <- input_data %>%
-      dplyr::pull(component_name) %>%
-      unique() %>%
-      grep("(\\.IS$)|(_IS$)|(_d[0-9]{1,}_)|(\\(d[0-9]{1,}\\))", ., value = TRUE)
+    potential_istds <- input_data |>
+      dplyr::pull(component_name) |>
+      unique() |>
+      (\(x) grep("(\\.IS$)|(_IS$)|(_d[0-9]{1,}_)|(\\(d[0-9]{1,}\\))", x, value = TRUE))()
+
 
     new_istds <- base::setdiff(potential_istds, int_stds)
 
     if (length(new_istds) > 0) {
-      input_data <- input_data %>%
+      input_data <- input_data |>
         dplyr::mutate(
           is_istd = dplyr::if_else(component_name %in% new_istds, TRUE, is_istd),
           component_type = dplyr::if_else(component_name %in% new_istds, "Internal Standards", component_type),
@@ -459,7 +461,7 @@ load_parse_sciex_txt <- function(file_path, input_data = NULL, return_all_column
   cli::cli_progress_update()
 
   cli::cli_alert_info("Updating internal standard related columns")
-  input_data <- input_data %>%
+  input_data <- input_data |>
     dplyr::mutate(
       istd_area = dplyr::if_else(is_istd, area, istd_area),
       istd_height = dplyr::if_else(is_istd, height, istd_height),
@@ -490,8 +492,8 @@ load_parse_sciex_txt <- function(file_path, input_data = NULL, return_all_column
       "asymmetry_factor", "points_across_baseline", "points_across_fwhm", "batch_id"
     )
 
-    keep_columns <- base::intersect(keep_columns, names(input_data))
-    input_data <- input_data %>%
+    keep_columns <- intersect(keep_columns, names(input_data))
+    input_data <- input_data |>
       dplyr::select(dplyr::all_of(keep_columns))
   }
   cli::cli_progress_update()
@@ -503,53 +505,53 @@ load_parse_sciex_txt <- function(file_path, input_data = NULL, return_all_column
 
     if (any(input_data$area < 0, na.rm = TRUE)) {
       min_area <- min(input_data$area, na.rm = TRUE)
-      input_data <- input_data %>%
-        dplyr::group_by(component_name) %>%
-        dplyr::mutate(area = area - min_area + 100) %>%
+      input_data <- input_data |>
+        dplyr::group_by(component_name) |>
+        dplyr::mutate(area = area - min_area + 100) |>
         dplyr::ungroup()
 
       if (any(input_data$istd_area < 0, na.rm = TRUE)) {
         min_istd_area <- min(input_data$istd_area, na.rm = TRUE)
-        input_data <- input_data %>%
-          dplyr::group_by(istd) %>%
-          dplyr::mutate(istd_area = istd_area - min_istd_area + 100) %>%
+        input_data <- input_data |>
+          dplyr::group_by(istd) |>
+          dplyr::mutate(istd_area = istd_area - min_istd_area + 100) |>
           dplyr::ungroup()
         re_calc_istd_area_height_ratio <- TRUE
       }
 
-      input_data <- input_data %>%
+      input_data <- input_data |>
         dplyr::mutate(area_ratio = area / istd_area)
       re_calc_area_height_ratio <- TRUE
     }
 
     if (any(input_data$height < 0, na.rm = TRUE)) {
       min_height <- min(input_data$height, na.rm = TRUE)
-      input_data <- input_data %>%
-        dplyr::group_by(component_name) %>%
-        dplyr::mutate(height = height - min_height + 100) %>%
+      input_data <- input_data |>
+        dplyr::group_by(component_name) |>
+        dplyr::mutate(height = height - min_height + 100) |>
         dplyr::ungroup()
 
       if (any(input_data$istd_height < 0, na.rm = TRUE)) {
         min_istd_height <- min(input_data$istd_height, na.rm = TRUE)
-        input_data <- input_data %>%
-          dplyr::group_by(istd) %>%
-          dplyr::mutate(istd_height = istd_height - min_istd_height + 100) %>%
+        input_data <- input_data |>
+          dplyr::group_by(istd) |>
+          dplyr::mutate(istd_height = istd_height - min_istd_height + 100) |>
           dplyr::ungroup()
         re_calc_istd_area_height_ratio <- TRUE
       }
 
-      input_data <- input_data %>%
+      input_data <- input_data |>
         dplyr::mutate(height_ratio = height / istd_height)
       re_calc_area_height_ratio <- TRUE
     }
 
     if (re_calc_area_height_ratio) {
-      input_data <- input_data %>%
+      input_data <- input_data |>
         dplyr::mutate(area_height_ratio = area / height)
     }
 
     if (re_calc_istd_area_height_ratio) {
-      input_data <- input_data %>%
+      input_data <- input_data |>
         dplyr::mutate(istd_area_height_ratio = istd_area / istd_height)
     }
   }
