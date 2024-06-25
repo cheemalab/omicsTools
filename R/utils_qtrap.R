@@ -56,7 +56,7 @@ check_and_sort_columns <- function(area_data, area_txt) {
 #' @examples
 #' \dontrun{
 #' sample_data <- tibble::tribble(
-#'   ~Polarity, ~`Retention Time`, ~`Mass Info`, ~`Component Name`,
+#'   ~polarity, ~`retention_time`, ~`Mass Info`, ~`component_name`,
 #'   "Positive", 1.95, "61.0 / 44.0", "Urea_pos",
 #'   "Positive", 8.34, "206.0 / 189.0", "Lipoamide_pos",
 #'   "Positive", 2.18, "339.1 / 110.0", "AICAR_pos",
@@ -68,13 +68,13 @@ check_and_sort_columns <- function(area_data, area_txt) {
 #'   "Positive", 1.76, "150.1 / 133.0", "Methionine_pos",
 #'   "Positive", 7.79, "166.1 / 103.0", "Phenylalanine_pos"
 #' )
-#' detect_duplicates(sample_data, "Polarity", "Retention Time", "Mass Info", "Component Name")
+#' detect_duplicates(sample_data, "polarity", "retention_time", "Mass Info", "component_name")
 #' }
 #' @export
 #' @import dplyr tibble
 #' @importFrom rlang sym
 #' @author Yaoxiang Li
-detect_duplicates <- function(data, polarity_col = "Polarity", retention_time_col = "Retention Time", mass_info_col = "Mass Info", component_name_col = "Component Name") {
+detect_duplicates <- function(data, polarity_col = "polarity", retention_time_col = "retention_time", mass_info_col = "Mass Info", component_name_col = "component_name") {
   data <- dplyr::mutate(data, MRM_Duplicate_Flag = "")
 
   for (i in 1:nrow(data)) {
@@ -111,19 +111,19 @@ detect_duplicates <- function(data, polarity_col = "Polarity", retention_time_co
 #' @examples
 #' \dontrun{
 #' mrm_data <- tibble::tribble(
-#'   ~`Sample Name`, ~`Sample ID`, ~Polarity, ~`Retention Time`, ~`Mass Info`, ~`Component Name`,
+#'   ~`data_filename`, ~`sample_id`, ~polarity, ~`retention_time`, ~`Mass Info`, ~`component_name`,
 #'   "Sample1", "ID1", "Positive", 1.95, "61.0 / 44.0", "Urea_pos",
 #'   "Sample1", "ID1", "Positive", 8.34, "206.0 / 189.0", "Lipoamide_pos",
 #'   "Sample2", "ID2", "Positive", 2.18, "339.1 / 110.0", "AICAR_pos",
 #'   "Sample2", "ID2", "Positive", 1.76, "175.1 / 70.0", "Arginine_pos"
 #' )
-#' processed_data <- process_mrm_duplicates(mrm_data, "Sample Name", "Sample ID", "Polarity", "Retention Time", "Mass Info", "Component Name")
+#' processed_data <- process_mrm_duplicates(mrm_data, "data_filename", "sample_id", "polarity", "retention_time", "Mass Info", "component_name")
 #' print(processed_data)
 #' }
 #' @export
 #' @import dplyr cli
 #' @author Yaoxiang Li
-process_mrm_duplicates <- function(mrm_data, sample_name_col = "Sample Name", sample_id_col = "Sample ID", polarity_col = "Polarity", retention_time_col = "Retention Time", mass_info_col = "Mass Info", component_name_col = "Component Name") {
+process_mrm_duplicates <- function(mrm_data, sample_name_col = "data_filename", sample_id_col = "sample_id", polarity_col = "polarity", retention_time_col = "retention_time", mass_info_col = "Mass Info", component_name_col = "component_name") {
   # Add sample_id column to mrm_data
   mrm_data <- mrm_data |>
     dplyr::mutate(sample_id = paste(!!dplyr::sym(sample_name_col), !!dplyr::sym(sample_id_col), sep = "_"))
@@ -172,14 +172,14 @@ process_mrm_duplicates <- function(mrm_data, sample_name_col = "Sample Name", sa
 #' @examples
 #' \dontrun{
 #' all_txt <- tibble::tribble(
-#'   ~`Sample Name`, ~`Sample ID`, ~`Component Name`, ~Area, ~`IS Area`,
+#'   ~`data_filename`, ~`sample_id`, ~`component_name`, ~Area, ~`IS Area`,
 #'   "Sample1", "ID1", "Compound1", 100, 50,
 #'   "Sample1", "ID2", "Compound2", 200, 75,
 #'   "Sample2", "ID1", "Compound1", 150, 60,
 #'   "Sample2", "ID2", "Compound2", 250, 80
 #' )
-#' area_data <- convert_mrm_data(all_txt, "Area", "Sample Name", "Sample ID", "Component Name")
-#' is_area_data <- convert_mrm_data(all_txt, "IS Area", "Sample Name", "Sample ID", "Component Name")
+#' area_data <- convert_mrm_data(all_txt, "Area", "data_filename", "sample_id", "component_name")
+#' is_area_data <- convert_mrm_data(all_txt, "IS Area", "data_filename", "sample_id", "component_name")
 #' print(area_data)
 #' print(is_area_data)
 #' }
@@ -187,7 +187,7 @@ process_mrm_duplicates <- function(mrm_data, sample_name_col = "Sample Name", sa
 #' @import dplyr tidyr
 #' @importFrom metan transpose_df
 #' @author Yaoxiang Li
-convert_mrm_data <- function(data, response_col, sample_name_col = "Sample Name", sample_id_col = "Sample ID", component_name_col = "Component Name") {
+convert_mrm_data <- function(data, response_col, sample_name_col = "data_filename", sample_id_col = "sample_id", component_name_col = "component_name") {
   wide_data <- data |>
     dplyr::transmute(
       sample_id = paste0(!!dplyr::sym(sample_name_col), "_", !!dplyr::sym(sample_id_col)),
