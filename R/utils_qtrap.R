@@ -289,3 +289,246 @@ combine_flagged_data <- function(flagged_area, flagged_height, sample_id_col = "
 
   return(combined)
 }
+
+#' Load and Parse SCIEX OS Exported LC-MRM-MS2 Data
+#'
+#' @param file_path Filepath of the input text file of a complete output of the
+#' SCIEX OS results from a sequence. File should be tab-delimited and in the
+#' 'long' format.
+#' @param input_data Input tibble of raw SCIEX (pre-parsing) text file. If `NULL`
+#' (default value), data will be loaded from `file_path`.
+#' @param return_all_columns Logical value as to whether to return all columns (`TRUE`)
+#' or just the necessary columns for downstream machine learning analysis or
+#' quality control review (`FALSE`). Default value is `TRUE`.
+#' When set to false, the columns included in the returned tibble include:
+#' `"component_name"`, `"component_idx"`, `"precursor_mz"`, `"product_mz"`,
+#' `"is_istd"`, `"istd"`, `"retention_time_expected"`, `"data_filename"`,
+#' `"data_file_idx"`, `"sample_id"`, `"sample_type"`, `"component_type"`,
+#' `"polarity"`, `"component_group"`, `"outlier_reasons"`,
+#' `"retention_time_expected_istd"`, `"area"`, `"istd_area"`, `"area_ratio"`,
+#' `"height"`, `"istd_height"`, `"height_ratio"`, `"peak_quality"`,
+#' `"istd_peak_quality"`, `"retention_time"`, `"retention_time_istd"`,
+#' `"rt_error"`, `"rt_delta_min"`, `"rt_start"`, `"istd_rt_start"`, `"rt_end"`,
+#' `"istd_rt_end"`, `"peak_width"`, `"istd_peak_width"`, `"fwhm"`,
+#' `"istd_fwhm"`, `"signal_noise"`, `"istd_signal_noise"`, `"modified"`,
+#' `"relative_rt"`, `"used"`, `"tailing_factor"`, `"asymmetry_factor"`,
+#' `points_across_baseline"`, `"points_across_fwhm"`).
+#' @param check_negative_values Logical value as to whether to check for negative
+#' values in the `area` and `height` variables (for both components and internal
+#' standards). If `TRUE` (default) and there is at least one negative value in
+#' the data, the minimum `area` or `height` value will be subtracted from all
+#' `area` and/or `height` values by `component_name`, and 100 will then be added
+#' to avoid having values below 100. `area_ratio`, `height_ratio`, and
+#' `area_height_ratio` values (and their internal standard equivalent variables)
+#' will also be re-calculated.
+#' @param fix_istds Logical value (default `TRUE`) to identify internal standards
+#' by regular expression of `"(\\.IS$)|(_IS$)|(_d[0-9]{1,}_)|(\\(d[0-9]{1,}\\))"`.
+#' @return tibble with the fields appropriately renamed.
+#' @import readr dplyr cli tibble
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' data(sciex_mrm_ms_data)
+#' data_tbl <- load_parse_sciex_txt(
+#'   file_path = "path/to/file.txt",
+#'   return_all_columns = FALSE,
+#'   check_negative_values = TRUE
+#' )}
+load_parse_sciex_txt <- function(file_path, input_data = NULL, return_all_columns = TRUE,
+                                 check_negative_values = TRUE, fix_istds = TRUE) {
+  cli::cli_progress_bar("Reading data", total = 5)
+
+  if (is.null(input_data)) {
+    cli::cli_alert_info("Loading data from file")
+    input_data <- readr::read_tsv(file_path, na = c("N/A", ""))
+  }
+  cli::cli_progress_update()
+
+  cli::cli_alert_info("Renaming columns")
+  input_data <- input_data %>%
+    dplyr::rename(
+      component_name = `Component Name`,
+      component_idx = `Component Index`,
+      precursor_mz = `Precursor Mass`,
+      product_mz = `Fragment Mass`,
+      is_istd = `IS`,
+      istd = `IS Name`,
+      retention_time_expected = `Expected RT`,
+      data_filename = `Sample Name`,
+      data_file_idx = `Sample Index`,
+      sample_id = `Sample ID`,
+      sample_type = `Sample Type`,
+      vial_number = `Vial Number`,
+      dilution_factor = `Dilution Factor`,
+      injection_volume_ul = `Injection Volume`,
+      component_type = `Component Type`,
+      polarity = `Polarity`,
+      component_group = `Component Group Name`,
+      outlier_reasons = `Outlier Reasons`,
+      retention_time_expected_istd = `IS Expected RT`,
+      area = `Area`,
+      istd_area = `IS Area`,
+      area_ratio = `Area Ratio`,
+      height = `Height`,
+      istd_height = `IS Height`,
+      height_ratio = `Height Ratio`,
+      area_height_ratio = `Area / Height`,
+      istd_area_height_ratio = `IS Area / Height`,
+      peak_quality = `Quality`,
+      istd_peak_quality = `IS Quality`,
+      retention_time = `Retention Time`,
+      retention_time_istd = `IS Retention Time`,
+      rt_error = `Retention Time Error (%)`,
+      rt_delta_min = `Retention Time Delta (min)`,
+      rt_start = `Start Time`,
+      istd_rt_start = `IS Start Time`,
+      rt_end = `End Time`,
+      istd_rt_end = `IS End Time`,
+      peak_width = `Total Width`,
+      istd_peak_width = `IS Total Width`,
+      fwhm = `Width at 50%`,
+      istd_fwhm = `IS Width at 50%`,
+      signal_noise = `Signal / Noise`,
+      istd_signal_noise = `IS Signal / Noise`,
+      modified = `Modified`,
+      relative_rt = `Relative RT`,
+      used = `Used`,
+      tailing_factor = `Tailing Factor`,
+      asymmetry_factor = `Asymmetry Factor`,
+      points_across_baseline = `Points Across Baseline`,
+      points_across_fwhm = `Points Across Half Height`
+    ) %>%
+    dplyr::mutate(
+      polarity = tolower(polarity),
+      precursor_mz = as.numeric(precursor_mz),
+      product_mz = as.numeric(product_mz)
+    )
+  cli::cli_progress_update()
+
+  if (fix_istds) {
+    cli::cli_alert_info("Fixing internal standards")
+    int_stds <- input_data %>%
+      dplyr::filter(is_istd == TRUE) %>%
+      dplyr::pull(component_name) %>%
+      unique()
+
+    potential_istds <- input_data %>%
+      dplyr::pull(component_name) %>%
+      unique() %>%
+      grep("(\\.IS$)|(_IS$)|(_d[0-9]{1,}_)|(\\(d[0-9]{1,}\\))", ., value = TRUE)
+
+    new_istds <- base::setdiff(potential_istds, int_stds)
+
+    if (length(new_istds) > 0) {
+      input_data <- input_data %>%
+        dplyr::mutate(
+          is_istd = dplyr::if_else(component_name %in% new_istds, TRUE, is_istd),
+          component_type = dplyr::if_else(component_name %in% new_istds, "Internal Standards", component_type),
+          istd = dplyr::if_else(component_name %in% new_istds, NA_character_, istd)
+        )
+    }
+  }
+  cli::cli_progress_update()
+
+  cli::cli_alert_info("Updating internal standard related columns")
+  input_data <- input_data %>%
+    dplyr::mutate(
+      istd_area = dplyr::if_else(is_istd, area, istd_area),
+      istd_height = dplyr::if_else(is_istd, height, istd_height),
+      istd_peak_quality = dplyr::if_else(is_istd, peak_quality, istd_peak_quality),
+      retention_time_istd = dplyr::if_else(is_istd, retention_time, retention_time_istd),
+      istd_rt_start = dplyr::if_else(is_istd, rt_start, istd_rt_start),
+      istd_rt_end = dplyr::if_else(is_istd, rt_end, istd_rt_end),
+      istd_peak_width = dplyr::if_else(is_istd, peak_width, istd_peak_width),
+      istd_fwhm = dplyr::if_else(is_istd, fwhm, istd_fwhm),
+      istd_signal_noise = dplyr::if_else(is_istd, signal_noise, istd_signal_noise),
+      area_ratio = dplyr::if_else(is_istd, area / istd_area, area_ratio),
+      height_ratio = dplyr::if_else(is_istd, height / istd_height, height_ratio)
+    )
+  cli::cli_progress_update()
+
+  if (!return_all_columns) {
+    cli::cli_alert_info("Selecting necessary columns")
+    keep_columns <- c(
+      "component_name", "component_idx", "precursor_mz", "product_mz",
+      "is_istd", "istd", "retention_time_expected", "data_filename", "data_file_idx",
+      "sample_id", "sample_type", "component_type", "polarity", "component_group",
+      "outlier_reasons", "retention_time_expected_istd", "area", "istd_area",
+      "area_ratio", "height", "istd_height", "height_ratio", "peak_quality",
+      "istd_peak_quality", "retention_time", "retention_time_istd", "rt_error",
+      "rt_delta_min", "rt_start", "istd_rt_start", "rt_end", "istd_rt_end",
+      "peak_width", "istd_peak_width", "fwhm", "istd_fwhm", "signal_noise",
+      "istd_signal_noise", "modified", "relative_rt", "used", "tailing_factor",
+      "asymmetry_factor", "points_across_baseline", "points_across_fwhm", "batch_id"
+    )
+
+    keep_columns <- base::intersect(keep_columns, names(input_data))
+    input_data <- input_data %>%
+      dplyr::select(dplyr::all_of(keep_columns))
+  }
+  cli::cli_progress_update()
+
+  if (check_negative_values) {
+    cli::cli_alert_info("Checking for negative values")
+    re_calc_area_height_ratio <- FALSE
+    re_calc_istd_area_height_ratio <- FALSE
+
+    if (any(input_data$area < 0, na.rm = TRUE)) {
+      min_area <- min(input_data$area, na.rm = TRUE)
+      input_data <- input_data %>%
+        dplyr::group_by(component_name) %>%
+        dplyr::mutate(area = area - min_area + 100) %>%
+        dplyr::ungroup()
+
+      if (any(input_data$istd_area < 0, na.rm = TRUE)) {
+        min_istd_area <- min(input_data$istd_area, na.rm = TRUE)
+        input_data <- input_data %>%
+          dplyr::group_by(istd) %>%
+          dplyr::mutate(istd_area = istd_area - min_istd_area + 100) %>%
+          dplyr::ungroup()
+        re_calc_istd_area_height_ratio <- TRUE
+      }
+
+      input_data <- input_data %>%
+        dplyr::mutate(area_ratio = area / istd_area)
+      re_calc_area_height_ratio <- TRUE
+    }
+
+    if (any(input_data$height < 0, na.rm = TRUE)) {
+      min_height <- min(input_data$height, na.rm = TRUE)
+      input_data <- input_data %>%
+        dplyr::group_by(component_name) %>%
+        dplyr::mutate(height = height - min_height + 100) %>%
+        dplyr::ungroup()
+
+      if (any(input_data$istd_height < 0, na.rm = TRUE)) {
+        min_istd_height <- min(input_data$istd_height, na.rm = TRUE)
+        input_data <- input_data %>%
+          dplyr::group_by(istd) %>%
+          dplyr::mutate(istd_height = istd_height - min_istd_height + 100) %>%
+          dplyr::ungroup()
+        re_calc_istd_area_height_ratio <- TRUE
+      }
+
+      input_data <- input_data %>%
+        dplyr::mutate(height_ratio = height / istd_height)
+      re_calc_area_height_ratio <- TRUE
+    }
+
+    if (re_calc_area_height_ratio) {
+      input_data <- input_data %>%
+        dplyr::mutate(area_height_ratio = area / height)
+    }
+
+    if (re_calc_istd_area_height_ratio) {
+      input_data <- input_data %>%
+        dplyr::mutate(istd_area_height_ratio = istd_area / istd_height)
+    }
+  }
+
+  cli::cli_alert_success("Data processing complete")
+  cli::cli_progress_done()
+
+  return(input_data)
+}
