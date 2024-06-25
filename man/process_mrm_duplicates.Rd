@@ -6,12 +6,12 @@
 \usage{
 process_mrm_duplicates(
   mrm_data,
-  sample_name_col = "Sample Name",
-  sample_id_col = "Sample ID",
-  polarity_col = "Polarity",
-  retention_time_col = "Retention Time",
+  sample_name_col = "data_filename",
+  sample_id_col = "sample_id",
+  polarity_col = "polarity",
+  retention_time_col = "retention_time",
   mass_info_col = "Mass Info",
-  component_name_col = "Component Name"
+  component_name_col = "component_name"
 )
 }
 \arguments{
@@ -40,13 +40,13 @@ same polarity, less than a 1-minute retention time difference, and the same MRM 
 \examples{
 \dontrun{
 mrm_data <- tibble::tribble(
-  ~`Sample Name`, ~`Sample ID`, ~Polarity, ~`Retention Time`, ~`Mass Info`, ~`Component Name`,
+  ~`data_filename`, ~`sample_id`, ~polarity, ~`retention_time`, ~`Mass Info`, ~`component_name`,
   "Sample1", "ID1", "Positive", 1.95, "61.0 / 44.0", "Urea_pos",
   "Sample1", "ID1", "Positive", 8.34, "206.0 / 189.0", "Lipoamide_pos",
   "Sample2", "ID2", "Positive", 2.18, "339.1 / 110.0", "AICAR_pos",
   "Sample2", "ID2", "Positive", 1.76, "175.1 / 70.0", "Arginine_pos"
 )
-processed_data <- process_mrm_duplicates(mrm_data, "Sample Name", "Sample ID", "Polarity", "Retention Time", "Mass Info", "Component Name")
+processed_data <- process_mrm_duplicates(mrm_data, "data_filename", "sample_id", "polarity", "retention_time", "Mass Info", "component_name")
 print(processed_data)
 }
 }

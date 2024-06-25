@@ -6,10 +6,10 @@
 \usage{
 detect_duplicates(
   data,
-  polarity_col = "Polarity",
-  retention_time_col = "Retention Time",
+  polarity_col = "polarity",
+  retention_time_col = "retention_time",
   mass_info_col = "Mass Info",
-  component_name_col = "Component Name"
+  component_name_col = "component_name"
 )
 }
 \arguments{
@@ -33,7 +33,7 @@ same polarity, less than a 1-minute retention time difference, and the same MRM 
 \examples{
 \dontrun{
 sample_data <- tibble::tribble(
-  ~Polarity, ~`Retention Time`, ~`Mass Info`, ~`Component Name`,
+  ~polarity, ~`retention_time`, ~`Mass Info`, ~`component_name`,
   "Positive", 1.95, "61.0 / 44.0", "Urea_pos",
   "Positive", 8.34, "206.0 / 189.0", "Lipoamide_pos",
   "Positive", 2.18, "339.1 / 110.0", "AICAR_pos",
@@ -45,7 +45,7 @@ sample_data <- tibble::tribble(
   "Positive", 1.76, "150.1 / 133.0", "Methionine_pos",
   "Positive", 7.79, "166.1 / 103.0", "Phenylalanine_pos"
 )
-detect_duplicates(sample_data, "Polarity", "Retention Time", "Mass Info", "Component Name")
+detect_duplicates(sample_data, "polarity", "retention_time", "Mass Info", "component_name")
 }
 }
 \author{

@@ -7,9 +7,9 @@
 convert_mrm_data(
   data,
   response_col,
-  sample_name_col = "Sample Name",
-  sample_id_col = "Sample ID",
-  component_name_col = "Component Name"
+  sample_name_col = "data_filename",
+  sample_id_col = "sample_id",
+  component_name_col = "component_name"
 )
 }
 \arguments{
@@ -32,14 +32,14 @@ This function converts a tibble containing MRM data to a wide format based on th
 \examples{
 \dontrun{
 all_txt <- tibble::tribble(
-  ~`Sample Name`, ~`Sample ID`, ~`Component Name`, ~Area, ~`IS Area`,
+  ~`data_filename`, ~`sample_id`, ~`component_name`, ~Area, ~`IS Area`,
   "Sample1", "ID1", "Compound1", 100, 50,
   "Sample1", "ID2", "Compound2", 200, 75,
   "Sample2", "ID1", "Compound1", 150, 60,
   "Sample2", "ID2", "Compound2", 250, 80
 )
-area_data <- convert_mrm_data(all_txt, "Area", "Sample Name", "Sample ID", "Component Name")
-is_area_data <- convert_mrm_data(all_txt, "IS Area", "Sample Name", "Sample ID", "Component Name")
+area_data <- convert_mrm_data(all_txt, "Area", "data_filename", "sample_id", "component_name")
+is_area_data <- convert_mrm_data(all_txt, "IS Area", "data_filename", "sample_id", "component_name")
 print(area_data)
 print(is_area_data)
 }
