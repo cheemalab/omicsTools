@@ -255,40 +255,67 @@ flag_underexpressed_features <- function(data, sample_id_col = "sample_id", feat
 
 
 
-#' Combine Flagged Area and Height Data
+#' Combine Multiple Logical Tibbles with Intersection or Union
 #'
-#' This function combines flagged area and height data tibbles. If any feature is marked as "Too high in Blank"
-#' in either tibble for a given sample, it will be marked as "Too high in Blank" in the combined tibble.
+#' @param ... Multiple tibbles to be combined. Each tibble should have the same
+#' dimensions, same column names in the same order, and the first column values
+#' should be identical across all tibbles.
+#' @param method A string indicating the method to combine the tibbles.
+#' Either "intersection" or "union". Default is "intersection".
 #'
-#' @param flagged_area A tibble containing flagged area data.
-#' @param flagged_height A tibble containing flagged height data.
-#' @param sample_id_col Name of the column containing sample ID information.
-#' @return A combined tibble with the same dimensions and column names as the input data,
-#'         containing "Too high in Blank" if flagged in either tibble.
-#' @examples
-#' \dontrun{
-#' combined_data <- combine_flagged_data(flagged_area_data, flagged_height_data, "sample_id")
-#' print(combined_data)
-#' }
+#' @return A combined tibble where each cell is TRUE based on the method:
+#' - "intersection": TRUE if all corresponding cells in the input tibbles are TRUE,
+#' otherwise FALSE.
+#' - "union": TRUE if at least one corresponding cell in the input tibbles is TRUE,
+#' otherwise FALSE.
+#' @import dplyr purrr tibble
 #' @export
-#' @import dplyr
-#' @author Yaoxiang Li
-combine_flagged_data <- function(flagged_area, flagged_height, sample_id_col = "sample_id") {
-  # Ensure the sample IDs and feature columns are aligned
-  stopifnot(identical(flagged_area[[sample_id_col]], flagged_height[[sample_id_col]]))
-  feature_cols <- setdiff(names(flagged_area), sample_id_col)
-  stopifnot(identical(feature_cols, setdiff(names(flagged_height), sample_id_col)))
+#'
+#' @examples
+#' tibble1 <- tibble(id = 1:3, A = c(TRUE, FALSE, NA), B = c(TRUE, TRUE, FALSE))
+#' tibble2 <- tibble(id = 1:3, A = c(TRUE, TRUE, TRUE), B = c(FALSE, TRUE, TRUE))
+#' tibble3 <- tibble(id = 1:3, A = c(TRUE, FALSE, TRUE), B = c(TRUE, TRUE, NA))
+#' combine_logical_tibbles(tibble1, tibble2, tibble3, method = "intersection")
+#' combine_logical_tibbles(tibble1, tibble2, tibble3, method = "union")
+combine_logical_tibbles <- function(..., method = c("intersection", "union")) {
+  method <- match.arg(method)
+  tibbles <- list(...)
 
-  # Combine the data using a union set rule
-  combined <- flagged_area
-  for (col in feature_cols) {
-    combined[[col]] <- dplyr::if_else(flagged_area[[col]] == TRUE | flagged_height[[col]] == TRUE,
-                                      TRUE, FALSE
-    )
+  # Check if all tibbles have the same dimensions, column names and first column values
+  first_column_values <- purrr::map(tibbles, ~ .x[[1]])
+  if (!all(sapply(first_column_values, identical, first_column_values[[1]]))) {
+    stop("The first column values are not identical across all tibbles.")
   }
+
+  column_names <- purrr::map(tibbles, colnames)
+  if (!all(sapply(column_names, identical, column_names[[1]]))) {
+    stop("The column names are not identical across all tibbles.")
+  }
+
+  dimensions <- purrr::map(tibbles, dim)
+  if (!all(sapply(dimensions, identical, dimensions[[1]]))) {
+    stop("The dimensions are not identical across all tibbles.")
+  }
+
+  # Combine tibbles based on the method
+  combined <- purrr::reduce(tibbles, function(x, y) {
+    result <- x
+    for (j in seq_along(x)) {
+      if (j == 1) {
+        next
+      }
+      if (method == "intersection") {
+        result[[j]] <- x[[j]] & y[[j]]
+      } else if (method == "union") {
+        result[[j]] <- x[[j]] | y[[j]]
+      }
+    }
+    result
+  })
 
   return(combined)
 }
+
 
 #' Load and Parse SCIEX OS Exported LC-MRM-MS2 Data
 #'
