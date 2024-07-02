@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils_batch_effect.R
 \name{perform_pvca_batch_assessment}
 \alias{perform_pvca_batch_assessment}
-\title{Perform Principal Variance Component Analysis (PVCA) for Batch Effect Assessment}
+\title{Perform Principal Variance Component Analysis for Batch Effect Assessment}
 \usage{
 perform_pvca_batch_assessment(
   data_matrix,
@@ -24,8 +24,32 @@ perform_pvca_batch_assessment(
 A PVCA object containing the results of the batch effect assessment.
 }
 \description{
-This function performs Principal Variance Component Analysis (PVCA) to assess batch effects in the dataset.
+This function performs Principal Variance Component Analysis to assess batch effects in the dataset.
 }
 \examples{
+# Example data
+set.seed(123)
+data_matrix <- data.frame(
+  sample1 = rnorm(100),
+  sample2 = rnorm(100),
+  sample3 = rnorm(100),
+  sample4 = rnorm(100),
+  sample5 = rnorm(100),
+  sample6 = rnorm(100),
+  sample7 = rnorm(100),
+  sample8 = rnorm(100),
+  sample9 = rnorm(100),
+  sample10 = rnorm(100)
+)
+rownames(data_matrix) <- paste0("feature", 1:100)
+
+sample_info <- data.frame(
+  dose = c(0, 1, 2, 1, 0, 2, 1, 0, 2, 1),
+  time = c(-1, 1, 25, -1, 1, 25, -1, 1, 25, -1),
+  batch = rep(c("A", "B", "C"), length.out = 10)
+)
+rownames(sample_info) <- colnames(data_matrix)
+
+# Perform PVCA Batch Effect Assessment
 pvca_results <- perform_pvca_batch_assessment(data_matrix, sample_info, c("batch", "dose", "time"), 0.6)
 }
