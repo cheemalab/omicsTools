@@ -36,10 +36,10 @@
 #' )
 #' rownames(sample_info) <- colnames(data_matrix)
 #'
-#' # Perform PVCA Batch Effect Assessment
-#' pvca_results <- perform_pvca_batch_assessment(data_matrix, sample_info, c("batch", "dose", "time"), 0.6)
-perform_pvca_batch_assessment <- function(data_matrix, sample_info, batch_effects, threshold) {
-  cli::cli_h1("Starting PVCA Batch Effect Assessment")
+#' # Perform Batch Effect Assessment
+#' pvca_results <- perform_batch_assessment(data_matrix, sample_info, c("batch", "dose", "time"), 0.6)
+perform_batch_assessment <- function(data_matrix, sample_info, batch_effects, threshold) {
+  cli::cli_h1("Starting Batch Effect Assessment")
 
   # Ensure the input data frame is properly formatted
   if (!is.data.frame(data_matrix) && !is.matrix(data_matrix)) {
@@ -93,10 +93,10 @@ perform_pvca_batch_assessment <- function(data_matrix, sample_info, batch_effect
     phenoData = pheno_data
   )
 
-  cli::cli_alert_info("Performing PVCA Batch Assessment.")
+  cli::cli_alert_info("Performing Batch Assessment.")
   pvca_results <- pvca::pvcaBatchAssess(expression_set, batch_effects, threshold)
 
-  cli::cli_h1("PVCA Batch Effect Assessment Completed")
+  cli::cli_h1("Batch Effect Assessment Completed")
   return(pvca_results)
 }
 
