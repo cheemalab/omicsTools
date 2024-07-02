@@ -25,20 +25,28 @@ The goal of omicsTools is to provide tools for processing and analyzing omics da
 
 License: AGPL-3.0
 
+
+## Install dependencies
+
+```{r}
+if (!require("BiocManager", quietly = TRUE)) { install.packages("BiocManager") }
+if (!require("pvca", quietly = TRUE)) { BiocManager::install("pvca") }
+```
+
 ## Installation
 
 ### CRAN version
 
 You can install the Stable version of omicsTools like so:
 
-```r
+```{r}
 install.packages("omicsTools")
 ```
 
 ### Development version
 
 To get a bug fix, or use a feature from the development version, you can install omicsTools from GitHub.
-```r
+```{r}
 if (!require("devtools", quietly = TRUE))
     install.packages("devtools")
 devtools::install_github("cheemalab/omicsTools")
