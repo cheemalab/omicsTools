@@ -8,7 +8,7 @@
 #' @param threshold A numeric value between 0 and 1 to specify the PVCA threshold.
 #'
 #' @return A PVCA object containing the results of the batch effect assessment.
-#' @import Biobase pcva
+#' @import Biobase pvca
 #' @export
 #'
 #' @examples
@@ -61,7 +61,7 @@ perform_pvca_batch_assessment <- function(data_matrix, sample_info, batch_effect
 }
 
 
-#' @import Biobase pcva
+#' @import Biobase pvca
 #' @export
 pvcaBF <- function(df, sampleInfo, batch_effect, threshold) {
   print("pvcaBF start")
