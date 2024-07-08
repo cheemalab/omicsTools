@@ -20,10 +20,13 @@ attachment::att_amend_desc()
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module(name = "qc_rlsc", with_test = TRUE) # Name of the module
-golem::add_module(name = "imputation", with_test = TRUE) # Name of the module
-golem::add_module(name = "sample_sheet", with_test = TRUE) # Name of the module
-golem::add_module(name = "method_metadata", with_test = TRUE) # Name of the module
+
+golem::add_module(name = "qtrap_qc", with_test = TRUE)
+
+golem::add_module(name = "qc_rlsc", with_test = TRUE)
+golem::add_module(name = "imputation", with_test = TRUE)
+golem::add_module(name = "sample_sheet", with_test = TRUE)
+golem::add_module(name = "method_metadata", with_test = TRUE)
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*

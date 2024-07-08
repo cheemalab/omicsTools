@@ -4,15 +4,17 @@
 \alias{qc_normalize}
 \title{QC-RLSC Normalize function}
 \usage{
-qc_normalize(data, qc_label = "QC")
+qc_normalize(data, qc_label = "QC", sample_id_col = "sample_id")
 }
 \arguments{
 \item{data}{A data frame containing the sample data. The first column
-should contain the sample identifiers, and the rest of the columns
+should contain the sample identifiers by default named 'sample_id', and the rest of the columns
 contain the peaks to be normalized. QC samples should be indicated
 in the sample identifiers with 'QC'.}
 
 \item{qc_label}{A string indicating the label used for QC samples. Default is 'QC'.}
+
+\item{sample_id_col}{A string indicating the column name used for sample identifiers. Default is 'sample_id'.}
 }
 \value{
 A data frame with the first column as the sample identifiers and
@@ -32,7 +34,7 @@ data <- readr::read_csv(data_file)
 print(head(data))
 
 # Apply the qc_rlsc_normalize function
-normalized_data <- qc_normalize(data, qc_label = "QC")
+normalized_data <- qc_normalize(data, qc_label = "QC", sample_id_col = "Sample")
 
 # Display the first few rows of the normalized data
 print(head(normalized_data))
@@ -44,6 +46,4 @@ readr::write_csv(normalized_data, paste0(tempdir(), "/normalized_data.csv"))
 }
 \author{
 Yaoxiang Li
-
-License: GPL (>= 3)
 }

@@ -5,10 +5,11 @@
 #' Quality Control (QC) samples in the data.
 #'
 #' @param data A data frame containing the sample data. The first column
-#' should contain the sample identifiers, and the rest of the columns
+#' should contain the sample identifiers by default named 'sample_id', and the rest of the columns
 #' contain the peaks to be normalized. QC samples should be indicated
 #' in the sample identifiers with 'QC'.
 #' @param qc_label A string indicating the label used for QC samples. Default is 'QC'.
+#' @param sample_id_col A string indicating the column name used for sample identifiers. Default is 'sample_id'.
 #'
 #' @return A data frame with the first column as the sample identifiers and
 #' the rest of the columns containing the normalized peak intensities.
@@ -21,7 +22,7 @@
 #' print(head(data))
 #'
 #' # Apply the qc_rlsc_normalize function
-#' normalized_data <- qc_normalize(data, qc_label = "QC")
+#' normalized_data <- qc_normalize(data, qc_label = "QC", sample_id_col = "Sample")
 #'
 #' # Display the first few rows of the normalized data
 #' print(head(normalized_data))
@@ -35,15 +36,21 @@
 #' @importFrom dplyr bind_cols
 #' @export
 #' @author Yaoxiang Li
-#'
-#' License: GPL (>= 3)
-qc_normalize <- function(data, qc_label = "QC") {
+qc_normalize <- function(data, qc_label = "QC", sample_id_col = "sample_id") {
+  # Ensure the sample_id_col exists in the data
+  if (!(sample_id_col %in% colnames(data))) {
+    cli::cli_alert_warning(paste("Column", sample_id_col, "not found in the data."))
+    stop(paste("Column", sample_id_col, "not found in the data."))
+  }
+
+  cli::cli_alert_info("Starting QC-RLSC normalization...")
+
   # Convert the data except the sample identifiers to a matrix
-  peaks <- as.matrix(data[, -1])
+  peaks <- as.matrix(data[, !(colnames(data) %in% sample_id_col)])
 
   # Create a vector to index QC samples
   qc_idx <- rep(0, nrow(peaks))
-  qc_idx[grep(qc_label, data$Sample)] <- 1
+  qc_idx[grep(qc_label, data[[sample_id_col]])] <- 1
 
   # Create a sequence for the acquisition order
   acq_seq <- 1:nrow(peaks)
@@ -52,7 +59,12 @@ qc_normalize <- function(data, qc_label = "QC") {
   peaks_normalized <- matrix(ncol = ncol(peaks), nrow = nrow(peaks))
   colnames(peaks_normalized) <- colnames(peaks)
 
+  # Initialize the progress bar
+  cli_progress_bar("Normalizing features", total = ncol(peaks))
+
   for (i in 1:ncol(peaks)) {
+    cli_progress_update()
+
     # Perform a loess fit on the QC samples for each peak
     loess_fit <- stats::loess(peaks[which(qc_idx == 1), i] ~ acq_seq[which(qc_idx == 1)])
 
@@ -67,13 +79,14 @@ qc_normalize <- function(data, qc_label = "QC") {
     peaks_normalized[, i] <- peaks[, i] / interpolation$y
   }
 
+  cli::cli_alert_success("Normalization complete.")
+
   # Convert the normalized peaks matrix to a tibble
   peaks_normalized <- tibble::as_tibble(peaks_normalized)
 
   # Combine the sample identifiers with the normalized peaks
-  return(dplyr::bind_cols(data[, 1], peaks_normalized))
+  return(dplyr::bind_cols(data[, sample_id_col, drop = FALSE], peaks_normalized))
 }
-
 
 #' Perform Probabilistic Quotient Normalization for intensities
 #'

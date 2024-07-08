@@ -10,7 +10,7 @@ app_server <- function(input, output, session) {
   # res_auth <- shinymanager::secure_server(
   #   check_credentials = shinymanager::check_credentials(credentials)
   # )
-
+  mod_qtrap_qc_server("qtrap_qc")
   mod_qc_rlsc_server("qc_rlsc")
   mod_imputation_server("imputation")
   mod_sample_sheet_server("sample_sheet")

@@ -42,6 +42,11 @@ app_ui <- function(request) {
         sidebarMenu(
           sidebarHeader("Quality Control Tools"),
           menuItem(
+            "7500/5500 Qtrap",
+            tabName = "qtrap_qc",
+            icon = icon("chart-line")
+          ),
+          menuItem(
             "Missing Value",
             tabName = "imputation",
             icon = icon("chart-line")
@@ -115,8 +120,11 @@ app_ui <- function(request) {
 # Body --------------------------------------------------------------------
       body = dashboardBody(
         tabItems(
-
-# Tab: Imputaton ----------------------------------------------------------
+          tabItem(
+            tabName = "qtrap_qc",
+            mod_qtrap_qc_ui("qtrap_qc")
+          ),
+# Tab: Imputation ---------------------------------------------------------
           tabItem(
             tabName = "imputation",
             mod_imputation_ui("imputation")
@@ -125,7 +133,7 @@ app_ui <- function(request) {
             tabName = "qc_rlsc",
             mod_qc_rlsc_ui("qc_rlsc")
           ),
-# Tab: Sample List Generator --------------------------------------------------------------
+# Tab: Sample List Generator ----------------------------------------------
           tabItem(
             tabName = "sample_sheet",
             mod_sample_sheet_ui("sample_sheet")

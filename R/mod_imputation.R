@@ -143,9 +143,9 @@ mod_imputation_server <- function(id){
 
 
 
-      data <- data %>% dplyr::filter(!grepl('Blank', Sample))
-      data <- data %>% dplyr::filter(!grepl('BLANK', Sample))
-      data <- data %>% dplyr::filter(!grepl('NIST', Sample))
+      data <- data |> dplyr::filter(!grepl('Blank', Sample))
+      data <- data |> dplyr::filter(!grepl('BLANK', Sample))
+      data <- data |> dplyr::filter(!grepl('NIST', Sample))
 
 
       peaks   <- as.matrix(data[, -1])
