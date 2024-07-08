@@ -159,4 +159,52 @@ pqn_normalize <- function(data) {
   return(normalized_data)
 }
 
-utils::globalVariables(c("Sample"))
+
+#' Internal Standard Normalize
+#'
+#' This function performs internal standard normalization.
+#'
+#' @param area_data A data frame containing the area data.
+#' @param istd_area_data A data frame containing the internal standard area data.
+#'
+#' @return A data frame with normalized data.
+#' @importFrom dplyr bind_cols
+#' @export
+#' @examples
+#' area_data <- data.frame(sample_id = c("S1", "S2", "S3"), A = 1:3, B = 4:6)
+#' istd_area_data <- data.frame(sample_id = c("S1", "S2", "S3"), A = 1:3, B = 4:6)
+#' normalized_data <- internal_standard_normalize(area_data, istd_area_data)
+internal_standard_normalize <- function(area_data, istd_area_data) {
+  if (check_match(area_data, istd_area_data)) {
+    normalized_data <- area_data[, 2:ncol(area_data)] / istd_area_data[, 2:ncol(istd_area_data)]
+    normalized_data <- dplyr::bind_cols(area_data[, 1, drop = FALSE], normalized_data)
+    cli::cli_alert_success("Internal standard normalization complete.")
+    return(normalized_data)
+  } else {
+    cli::cli_alert_warning("Mismatch in column names or sample IDs between area data and internal standard area data.")
+    return(NULL)
+  }
+}
+
+
+#' Check Match
+#'
+#' This function checks if sample IDs and column names match between area data and internal standard area data.
+#'
+#' @param area_data A data frame containing the area data.
+#' @param istd_area_data A data frame containing the internal standard area data.
+#'
+#' @return A logical value indicating if the sample IDs and column names match.
+#' @export
+#' @examples
+#' area_data <- data.frame(sample_id = c("S1", "S2", "S3"), A = 1:3, B = 4:6)
+#' istd_area_data <- data.frame(sample_id = c("S1", "S2", "S3"), A = 1:3, B = 4:6)
+#' check_match(area_data, istd_area_data)
+check_match <- function(area_data, istd_area_data) {
+  area_sample_ids <- unique(area_data$sample_id)
+  istd_sample_ids <- unique(istd_area_data$sample_id)
+  colnames_match <- all(colnames(area_data) == colnames(istd_area_data))
+  sample_ids_match <- all(area_sample_ids %in% istd_sample_ids)
+  return(colnames_match && sample_ids_match)
+}
+
