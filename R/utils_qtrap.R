@@ -184,7 +184,6 @@ process_mrm_duplicates <- function(mrm_data, sample_name_col = "data_filename", 
 #' }
 #' @export
 #' @import dplyr tidyr
-#' @importFrom metan transpose_df
 #' @author Yaoxiang Li
 convert_mrm_data <- function(data, response_col, sample_name_col = "data_filename", sample_id_col = "sample_id", component_name_col = "component_name") {
   wide_data <- data |>
@@ -194,7 +193,7 @@ convert_mrm_data <- function(data, response_col, sample_name_col = "data_filenam
       response = !!dplyr::sym(response_col)
     ) |>
     tidyr::spread(sample_id, response) |>
-    metan::transpose_df() |>
+    transpose_df() |>
     dplyr::rename(sample_id = name)
 
   return(wide_data)

@@ -95,7 +95,6 @@ usethis::use_package("tidyr")
 usethis::use_package("cli")
 usethis::use_package("progress") # consider remove this
 
-
 ## Use git ----
 usethis::use_git()
 
