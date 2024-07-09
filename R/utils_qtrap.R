@@ -275,6 +275,7 @@ flag_underexpressed_features <- function(data, sample_id_col = "sample_id", feat
 #' tibble3 <- tibble(id = 1:3, A = c(TRUE, FALSE, TRUE), B = c(TRUE, TRUE, NA))
 #' combine_logical_tibbles(tibble1, tibble2, tibble3, method = "intersection")
 #' combine_logical_tibbles(tibble1, tibble2, tibble3, method = "union")
+#' @author Yaoxiang Li
 combine_logical_tibbles <- function(..., method = c("intersection", "union")) {
   method <- match.arg(method)
   tibbles <- list(...)
@@ -361,6 +362,7 @@ combine_logical_tibbles <- function(..., method = c("intersection", "union")) {
 #'   check_negative_values = TRUE
 #' )
 #' }
+#' @author Yaoxiang Li
 load_parse_sciex_txt <- function(file_path, input_data = NULL, return_all_columns = TRUE,
                                  check_negative_values = TRUE, fix_istds = TRUE) {
   cli::cli_progress_bar("Reading data", total = 5)
@@ -558,4 +560,275 @@ load_parse_sciex_txt <- function(file_path, input_data = NULL, return_all_column
   cli::cli_progress_done()
 
   return(input_data)
+}
+
+
+#' Generate Process Report for Sciex 7500/5500 Raw Data
+#'
+#' This function generates a comprehensive process report for Sciex 7500/5500 raw data,
+#' including data normalization, missing value imputation, and optional normalization
+#' and flagging steps. The results are saved in a temporary directory and then zipped
+#' into a file for easy sharing.
+#'
+#' @param input_file The path to the input file containing raw data.
+#' @param filter_blank Logical, whether to filter out blank samples (default: TRUE).
+#' @param blank_string Character, regular expression pattern to match blank sample IDs (default: 'Blank|BLANK|blank').
+#' @param filter_nist Logical, whether to filter out NIST samples (default: TRUE).
+#' @param nist_string Character, regular expression pattern to match NIST sample IDs (default: 'NIST|Nist|nist').
+#' @param imputation_threshold Numeric, threshold for missing value imputation (default: 0.25).
+#' @param imputation_method Character, method for missing value imputation (default: 'half_min').
+#' @param qc_string Character, regular expression pattern to match QC sample IDs (default: 'QC').
+#' @param include_qc_rlsc Logical, whether to include QC-RLSC normalization (default: TRUE).
+#' @param include_pqn Logical, whether to include PQN normalization (default: TRUE).
+#' @param include_qc_rsd Logical, whether to include QC RSD calculation (default: TRUE).
+#' @param include_snr_flag Logical, whether to include Signal-to-Noise ratio flagging (default: TRUE).
+#' @param snr_threshold Numeric, threshold for Signal-to-Noise ratio flagging (default: 10).
+#' @param include_area_flag Logical, whether to include area threshold flagging (default: TRUE).
+#' @param include_height_flag Logical, whether to include height threshold flagging (default: TRUE).
+#' @param id_col Character, name of the column containing sample IDs (default: 'sample_id').
+#' @param ignore_na Logical, whether to ignore NA values in QC RSD calculation (default: TRUE).
+#'
+#' @return The path to the generated zip file containing the process report.
+#' @importFrom dplyr filter mutate case_when
+#' @importFrom stringr str_detect
+#' @importFrom readr write_csv write_tsv
+#' @importFrom zip zip
+#' @export
+#'
+#' @author Yaoxiang Li
+generate_process_report <- function(input_file,
+                                    filter_blank = TRUE,
+                                    blank_string = 'Blank|BLANK|blank',
+                                    filter_nist = TRUE,
+                                    nist_string = 'NIST|Nist|nist',
+                                    imputation_threshold = 0.25,
+                                    imputation_method = "half_min",
+                                    qc_string = "QC",
+                                    include_qc_rlsc = TRUE,
+                                    include_pqn = TRUE,
+                                    include_qc_rsd = TRUE,
+                                    include_snr_flag = TRUE,
+                                    snr_threshold = 10,
+                                    include_area_flag = TRUE,
+                                    include_height_flag = TRUE,
+                                    id_col = "sample_id",
+                                    ignore_na = TRUE) {
+
+  # Create a temporary directory
+  temp_dir <- tempfile()
+
+  # Create necessary directories within the temp directory
+  dirs <- c(
+    "01_Before_Internal_Standard_Normalization",
+    "02_Internal_Standard_Normalized_Data",
+    "03_Missing_Value_Imputed_Data"
+  )
+
+  step_counter <- 4
+
+  if (include_qc_rlsc) {
+    dirs <- c(dirs, sprintf("%02d_QC_RLSC_Normalized_Data", step_counter))
+    step_counter <- step_counter + 1
+  }
+
+  if (include_pqn) {
+    dirs <- c(dirs, sprintf("%02d_PQN_Normalized_Data", step_counter))
+    step_counter <- step_counter + 1
+  }
+
+  if (include_qc_rsd) {
+    dirs <- c(dirs, sprintf("%02d_QC_RSD_Stats", step_counter))
+    step_counter <- step_counter + 1
+  }
+
+  if (include_snr_flag) {
+    dirs <- c(dirs, sprintf("%02d_Signal_to_Noise_Flag", step_counter))
+    step_counter <- step_counter + 1
+  }
+
+  if (include_area_flag) {
+    dirs <- c(dirs, sprintf("%02d_Area_Flag", step_counter))
+    step_counter <- step_counter + 1
+  }
+
+  if (include_height_flag) {
+    dirs <- c(dirs, sprintf("%02d_Height_Flag", step_counter))
+    step_counter <- step_counter + 1
+  }
+
+  dir_paths <- file.path(temp_dir, dirs)
+  lapply(dir_paths, dir.create, showWarnings = TRUE, recursive = TRUE)
+
+  # Reset step counter for processing steps
+  step_counter <- 4
+
+  # 0. Load the data from the provided file
+  raw_data <- omicsTools::load_parse_sciex_txt(input_file)
+
+  # 1. Get area and IS area
+  feature_data <- omicsTools::convert_mrm_data(raw_data, "area")
+  is_data <- omicsTools::convert_mrm_data(raw_data, "istd_area")
+
+  # Save area_data and is_area_data as tab-delimited text files
+  readr::write_tsv(feature_data, file.path(temp_dir, "01_Before_Internal_Standard_Normalization", "area.txt"))
+  readr::write_tsv(is_data, file.path(temp_dir, "01_Before_Internal_Standard_Normalization", "IS_area.txt"))
+
+  # 2. Perform internal standard normalization
+  normalized_data <- omicsTools::internal_standard_normalize(feature_data, is_data)
+  if (is.null(normalized_data)) return(NULL)
+
+  # Save normalized_data
+  readr::write_csv(normalized_data, file.path(temp_dir, "02_Internal_Standard_Normalized_Data", "Internal_Standard_Normalized_Data.csv"))
+
+  # 3. Perform missing value imputation
+  if (filter_blank) {
+    blank_pattern <- blank_string
+    normalized_data <- normalized_data |>
+      dplyr::filter(!stringr::str_detect(sample_id, blank_pattern))
+  }
+
+  if (filter_nist) {
+    nist_pattern <- nist_string
+    normalized_data <- normalized_data |>
+      dplyr::filter(!stringr::str_detect(sample_id, nist_pattern))
+  }
+
+  imputed_data <- omicsTools::handle_missing_values(normalized_data, threshold = imputation_threshold, imputation_method = imputation_method)
+
+  # Save imputed_data
+  readr::write_csv(imputed_data, file.path(temp_dir, "03_Missing_Value_Imputed_Data", "Internal_Standard_Normalized_and_Imputed_Data.csv"))
+
+  # 4. Perform QC-RLSC normalization
+  if (include_qc_rlsc) {
+    qc_rlsc_normalized_data <- omicsTools::qc_normalize(imputed_data, qc_label = qc_string)
+
+    # Save qc_rlsc_normalized_data
+    readr::write_csv(qc_rlsc_normalized_data, file.path(temp_dir, sprintf("%02d_QC_RLSC_Normalized_Data", step_counter), "QC_RLSC_Normalized_Data.csv"))
+    step_counter <- step_counter + 1
+  }
+
+  # 5. Perform PQN normalization
+  if (include_pqn) {
+    pqn_normalized_data <- omicsTools::pqn_normalize(imputed_data)
+
+    # Save pqn_normalized_data
+    readr::write_csv(pqn_normalized_data, file.path(temp_dir, sprintf("%02d_PQN_Normalized_Data", step_counter), "PQN_Normalized_Data.csv"))
+    step_counter <- step_counter + 1
+  }
+
+  # 6. Optional QC RSD step
+  if (include_qc_rsd) {
+    area_data <- omicsTools::convert_mrm_data(raw_data, "area")
+    qc_stats_rsd <- omicsTools::calculate_qc_rsd(area_data, qc_string = qc_string, nist_string = nist_string, id_col = id_col, ignore_na = ignore_na)
+
+    readr::write_csv(qc_stats_rsd[["Pooled_QC_RSD"]], file.path(temp_dir, sprintf("%02d_QC_RSD_Stats", step_counter), "Pooled_QC_RSD.csv"))
+    readr::write_csv(qc_stats_rsd[["NIST_RSD"]], file.path(temp_dir, sprintf("%02d_QC_RSD_Stats", step_counter), "NIST_RSD.csv"))
+    step_counter <- step_counter + 1
+  }
+
+  # 7. Optional Signal-to-noise ratio flag
+  if (include_snr_flag) {
+    flagged_data <- raw_data %>%
+      dplyr::mutate(snr_flag = dplyr::case_when(
+        signal_noise > snr_threshold ~ TRUE,
+        signal_noise <= snr_threshold ~ FALSE,
+        is.na(signal_noise) ~ FALSE
+      ))
+
+    flagged_snr <- omicsTools::convert_mrm_data(flagged_data, "snr_flag")
+
+    readr::write_csv(flagged_snr, file.path(temp_dir, sprintf("%02d_Signal_to_Noise_Flag", step_counter), "flagged_snr.csv"))
+    step_counter <- step_counter + 1
+  }
+
+  # 8. Optional FLAG n_area_above_blank
+  if (include_area_flag) {
+    flagged_area <- omicsTools::flag_underexpressed_features(feature_data, sample_id_col = id_col, feature_cols = names(feature_data)[-1])
+
+    readr::write_csv(flagged_area, file.path(temp_dir, sprintf("%02d_Area_Flag", step_counter), "flagged_area.csv"))
+    step_counter <- step_counter + 1
+  }
+
+  # 9. Optional FLAG n_height_above_blank
+  if (include_height_flag) {
+    height_data <- omicsTools::convert_mrm_data(raw_data, "height")
+    flagged_height <- omicsTools::flag_underexpressed_features(height_data, sample_id_col = id_col, feature_cols = names(height_data)[-1])
+
+    readr::write_csv(flagged_height, file.path(temp_dir, sprintf("%02d_Height_Flag", step_counter), "flagged_height.csv"))
+    step_counter <- step_counter + 1
+  }
+
+  # Reset step_counter for generating Readme.txt
+  step_counter <- 4
+
+  # Generate Readme.txt
+  readme_content <- sprintf("
+├───01_Before_Internal_Standard_Normalization
+│       area.txt: Raw feature response for each feature before internal standard normalization
+│       IS_area.txt: Raw feature response for internal standard (may be used for internal standard normalization)
+│
+├───02_Internal_Standard_Normalized_Data
+│       Internal_Standard_Normalized_Data.csv: Internal standard normalized response for each feature
+│
+├───03_Missing_Value_Imputed_Data
+│       Internal_Standard_Normalized_and_Imputed_Data.csv: Post internal standard normalization, data was filtered using the specified missing value imputation method (threshold: %.2f, method: %s)
+", imputation_threshold, imputation_method)
+
+  if (include_qc_rlsc) {
+    readme_content <- paste(readme_content, sprintf("├───%02d_QC_RLSC_Normalized_Data\n│       QC_RLSC_Normalized_Data.csv: QC-RLSC normalized data matched with original IDs (QC string: %s)\n", step_counter, qc_string), sep = "\n")
+    step_counter <- step_counter + 1
+  }
+
+  if (include_pqn) {
+    readme_content <- paste(readme_content, sprintf("├───%02d_PQN_Normalized_Data\n│       PQN_Normalized_Data.csv: PQN normalized data matched with original IDs\n", step_counter), sep = "\n")
+    step_counter <- step_counter + 1
+  }
+
+  if (include_qc_rsd) {
+    readme_content <- paste(readme_content, sprintf("├───%02d_QC_RSD_Stats\n│       Pooled_QC_RSD.csv: Coefficient of variance for each metabolite in pooled QC samples (QC string: %s, NIST strings: %s, ID column: %s, Ignore NA: %s)\n│       NIST_RSD.csv: Coefficient of variance for each metabolite in NIST samples acquired in the batch\n", step_counter, qc_string, nist_string, id_col, ignore_na), sep = "\n")
+    step_counter <- step_counter + 1
+  }
+
+  if (include_snr_flag) {
+    readme_content <- paste(readme_content, sprintf("├───%02d_Signal_to_Noise_Flag\n│       flagged_snr.csv: Features flagged based on signal-to-noise ratio threshold (threshold: %d)\n", step_counter, snr_threshold), sep = "\n")
+    step_counter <- step_counter + 1
+  }
+
+  if (include_area_flag) {
+    readme_content <- paste(readme_content, sprintf("├───%02d_Area_Flag\n│       flagged_area.csv: Features flagged based on area threshold above blank\n", step_counter), sep = "\n")
+    step_counter <- step_counter + 1
+  }
+
+  if (include_height_flag) {
+    readme_content <- paste(readme_content, sprintf("├───%02d_Height_Flag\n│       flagged_height.csv: Features flagged based on height threshold above blank\n", step_counter), sep = "\n")
+    step_counter <- step_counter + 1
+  }
+
+  readme_content <- paste(readme_content, "└───Raw_Data\n        Description of the raw data used in the analysis", sep = "\n")
+
+  writeLines(readme_content, con = file.path(temp_dir, "Readme.txt"))
+
+  # Create a zip file with all the data
+  current_dir <- getwd()
+  zip_file <- file.path(current_dir, "Process_Report.zip")
+
+  # Get the list of files to zip with their relative paths, only including specific directories
+  files_to_zip <- unlist(lapply(dirs, function(d) {
+    list.files(file.path(temp_dir, d), recursive = TRUE, full.names = TRUE)
+  }))
+  relative_paths <- unlist(lapply(dirs, function(d) {
+    file.path(d, list.files(file.path(temp_dir, d), recursive = TRUE))
+  }))
+
+  # Add Readme.txt to the list of files to zip
+  files_to_zip <- c(files_to_zip, file.path(temp_dir, "Readme.txt"))
+  relative_paths <- c(relative_paths, "Readme.txt")
+
+  # Create the zip file
+  old_wd <- setwd(temp_dir)
+  zip::zip(zipfile = zip_file, files = relative_paths)
+  setwd(old_wd)
+
+  # Return the path to the zip file
+  return(zip_file)
 }

@@ -31,3 +31,6 @@ tibble3 <- tibble(id = 1:3, A = c(TRUE, FALSE, TRUE), B = c(TRUE, TRUE, NA))
 combine_logical_tibbles(tibble1, tibble2, tibble3, method = "intersection")
 combine_logical_tibbles(tibble1, tibble2, tibble3, method = "union")
 }
+\author{
+Yaoxiang Li
+}

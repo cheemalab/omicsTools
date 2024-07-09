@@ -65,3 +65,6 @@ data_tibble <- load_parse_sciex_txt(
 )
 }
 }
+\author{
+Yaoxiang Li
+}
