@@ -6,8 +6,8 @@
 \usage{
 calculate_qc_rsd(
   data,
-  qc_strings = "Pooled QC|Pooled_QC",
-  nist_strings = "NIST",
+  qc_string = "Pooled QC|Pooled_QC",
+  nist_string = "NIST",
   id_col = "sample_id",
   ignore_na = TRUE
 )
@@ -15,9 +15,9 @@ calculate_qc_rsd(
 \arguments{
 \item{data}{A tibble with the first column as sample IDs and other columns as features.}
 
-\item{qc_strings}{A string pattern to filter Pooled QC samples. Default is "Pooled QC|Pooled_QC".}
+\item{qc_string}{A string pattern to filter Pooled QC samples. Default is "Pooled QC|Pooled_QC".}
 
-\item{nist_strings}{A string pattern to filter NIST samples. Default is "NIST".}
+\item{nist_string}{A string pattern to filter NIST samples. Default is "NIST".}
 
 \item{id_col}{The name of the sample ID column. Default is "sample_id".}
 

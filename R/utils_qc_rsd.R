@@ -6,8 +6,8 @@
 #' the first column is the sample ID and all other columns are features.
 #'
 #' @param data A tibble with the first column as sample IDs and other columns as features.
-#' @param qc_strings A string pattern to filter Pooled QC samples. Default is "Pooled QC|Pooled_QC".
-#' @param nist_strings A string pattern to filter NIST samples. Default is "NIST".
+#' @param qc_string A string pattern to filter Pooled QC samples. Default is "Pooled QC|Pooled_QC".
+#' @param nist_string A string pattern to filter NIST samples. Default is "NIST".
 #' @param id_col The name of the sample ID column. Default is "sample_id".
 #' @param ignore_na Logical, whether to ignore NA values in calculations. Default is TRUE.
 #' @return A list containing tibbles with calculated statistics for Pooled QC and NIST samples. If no matching samples are found, returns NULL for that category.
@@ -32,7 +32,7 @@
 #' # Access results
 #' pooled_qc_rsd <- rsd_stats$Pooled_QC_RSD
 #' nist_rsd <- rsd_stats$NIST_RSD
-calculate_qc_rsd <- function(data, qc_strings = "Pooled QC|Pooled_QC", nist_strings = "NIST", id_col = "sample_id", ignore_na = TRUE) {
+calculate_qc_rsd <- function(data, qc_string = "Pooled QC|Pooled_QC", nist_string = "NIST", id_col = "sample_id", ignore_na = TRUE) {
   calculate_qc_statistics <- function(data, filter_strings, id_col, ignore_na) {
     qc_tibble <- data |> dplyr::filter(grepl(filter_strings, !!rlang::sym(id_col)))
 
