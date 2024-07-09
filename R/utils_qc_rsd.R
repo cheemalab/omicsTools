@@ -56,8 +56,8 @@ calculate_qc_rsd <- function(data, qc_string = "Pooled QC|Pooled_QC", nist_strin
     return(df.transposed)
   }
 
-  pooled_qc_stats <- calculate_qc_statistics(data, qc_strings, id_col, ignore_na)
-  nist_stats <- calculate_qc_statistics(data, nist_strings, id_col, ignore_na)
+  pooled_qc_stats <- calculate_qc_statistics(data, qc_string, id_col, ignore_na)
+  nist_stats <- calculate_qc_statistics(data, nist_string, id_col, ignore_na)
 
   return(list(Pooled_QC_RSD = pooled_qc_stats, NIST_RSD = nist_stats))
 }
