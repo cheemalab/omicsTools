@@ -81,9 +81,9 @@ detect_duplicates <- function(data, polarity_col = "polarity", retention_time_co
     current_row <- data[i, ]
     duplicates <- dplyr::filter(
       data,
-      !!dplyr::sym(polarity_col) == current_row[[polarity_col]],
-      abs(!!dplyr::sym(retention_time_col) - current_row[[retention_time_col]]) < 1,
-      !!dplyr::sym(mass_info_col) == current_row[[mass_info_col]]
+      !!rlang::sym(polarity_col) == current_row[[polarity_col]],
+      abs(!!rlang::sym(retention_time_col) - current_row[[retention_time_col]]) < 1,
+      !!rlang::sym(mass_info_col) == current_row[[mass_info_col]]
     )
 
     if (nrow(duplicates) > 1) {
@@ -125,7 +125,7 @@ detect_duplicates <- function(data, polarity_col = "polarity", retention_time_co
 process_mrm_duplicates <- function(mrm_data, sample_name_col = "data_filename", sample_id_col = "sample_id", polarity_col = "polarity", retention_time_col = "retention_time", mass_info_col = "Mass Info", component_name_col = "component_name") {
   # Add sample_id column to mrm_data
   mrm_data <- mrm_data |>
-    dplyr::mutate(sample_id = paste(!!dplyr::sym(sample_name_col), !!dplyr::sym(sample_id_col), sep = "_"))
+    dplyr::mutate(sample_id = paste(!!rlang::sym(sample_name_col), !!rlang::sym(sample_id_col), sep = "_"))
 
   # Extract unique sample_ids
   sample_ids <- mrm_data |>
@@ -141,7 +141,7 @@ process_mrm_duplicates <- function(mrm_data, sample_name_col = "data_filename", 
   for (id in sample_ids) {
     current_sample_data <- mrm_data |>
       dplyr::filter(sample_id == id) |>
-      dplyr::select(!!dplyr::sym(polarity_col), !!dplyr::sym(retention_time_col), !!dplyr::sym(mass_info_col), !!dplyr::sym(component_name_col), sample_id)
+      dplyr::select(!!rlang::sym(polarity_col), !!rlang::sym(retention_time_col), !!rlang::sym(mass_info_col), !!rlang::sym(component_name_col), sample_id)
 
     # Add the MRM_Duplicate_Flag column
     current_sample_data <- detect_duplicates(current_sample_data, polarity_col, retention_time_col, mass_info_col, component_name_col)
@@ -188,9 +188,9 @@ process_mrm_duplicates <- function(mrm_data, sample_name_col = "data_filename", 
 convert_mrm_data <- function(data, response_col, sample_name_col = "data_filename", sample_id_col = "sample_id", component_name_col = "component_name") {
   wide_data <- data |>
     dplyr::transmute(
-      sample_id = paste0(!!dplyr::sym(sample_name_col), "_", !!dplyr::sym(sample_id_col)),
-      compound_name = !!dplyr::sym(component_name_col),
-      response = !!dplyr::sym(response_col)
+      sample_id = paste0(!!rlang::sym(sample_name_col), "_", !!rlang::sym(sample_id_col)),
+      compound_name = !!rlang::sym(component_name_col),
+      response = !!rlang::sym(response_col)
     ) |>
     tidyr::spread(sample_id, response) |>
     transpose_df() |>
@@ -231,7 +231,7 @@ convert_mrm_data <- function(data, response_col, sample_name_col = "data_filenam
 #' @author Yaoxiang Li
 flag_underexpressed_features <- function(data, sample_id_col = "sample_id", feature_cols, threshold = 10) {
   # First blank sample
-  first_blank <- dplyr::filter(data, grepl("Blank", !!dplyr::sym(sample_id_col))) |> dplyr::slice(1)
+  first_blank <- dplyr::filter(data, grepl("Blank", !!rlang::sym(sample_id_col))) |> dplyr::slice(1)
 
   # Flag features
   flagged <- data |>
@@ -247,7 +247,7 @@ flag_underexpressed_features <- function(data, sample_id_col = "sample_id", feat
     dplyr::ungroup()
 
   # Output flagged features with sample_id
-  result <- dplyr::select(flagged, !!dplyr::sym(sample_id_col), dplyr::all_of(feature_cols))
+  result <- dplyr::select(flagged, !!rlang::sym(sample_id_col), dplyr::all_of(feature_cols))
   return(result)
 }
 

@@ -18,7 +18,7 @@ app_ui <- function(request) {
       dashboardHeader(
         title = dashboardBrand(
           title = "omicsTools",
-          color = "success",
+          color = "primary",
           href = "#",
           image = "https://cdn-icons-png.flaticon.com/512/3655/3655580.png",
         ),
@@ -33,11 +33,11 @@ app_ui <- function(request) {
 # Sidebar -----------------------------------------------------------------
       sidebar = dashboardSidebar(
         skin = "light",
-        status = "success",
+        status = "primary",
         elevation = 3,
         sidebarUserPanel(
           # image = "https://cdn-icons-png.flaticon.com/512/3655/3655580.png",
-          name = "Welcome!"
+          name = "Welcome to Cheema Lab!"
         ),
         sidebarMenu(
           sidebarHeader("Quality Control Tools"),
@@ -58,7 +58,7 @@ app_ui <- function(request) {
           )
         ),
         sidebarMenu(
-          sidebarHeader("Sample List Generator"),
+          sidebarHeader("Sample List Tools"),
           menuItem(
             "Sample Sheet",
             tabName = "sample_sheet",
@@ -68,6 +68,49 @@ app_ui <- function(request) {
             "Method Metadata",
             tabName = "method_metadata",
             icon = icon("table")
+          )
+        ),
+        sidebarMenu(
+          sidebarHeader("Visualization Tools"),
+          menuItem(
+            "Heatmap",
+            tabName = "vis_heatmap",
+            icon = icon("braille")
+          ),
+          menuItem(
+            "Volcano plot",
+            tabName = "vis_volcano",
+            icon = icon("vine")
+          ),
+          # menuItem(
+          #   "PCA",
+          #   tabName = "vis_pca",
+          #   icon = icon("star")
+          # ),
+          menuItem(
+            "Venn diagram",
+            tabName = "vis_venn",
+            icon = icon("cc-mastercard")
+          ),
+          # menuItem(
+          #   "Manhattan",
+          #   tabName = "vis_manhattan",
+          #   icon = icon("area-chart")
+          # ),
+          # menuItem(
+          #   "Raindrop",
+          #   tabName = "vis_raindrop",
+          #   icon = icon("cloud")
+          # ),
+          menuItem(
+            "Rain plot",
+            tabName = "vis_dot",
+            icon = icon("circle")
+          ),
+          menuItem(
+            "Circos plot",
+            tabName = "vis_circos",
+            icon = icon("gg-circle")
           )
         )
       ),
@@ -113,7 +156,7 @@ app_ui <- function(request) {
       footer = dashboardFooter(
         left = a(
           href = "#",
-          target = "_blank", "Unpublished tools created by Yaoxiang Li in Cheema Lab. All rights reserved."
+          target = "_blank", "Unpublished tools created by Yaoxiang Li @ Cheema Lab. All rights reserved."
         ),
         right = "©2024"
       ),
@@ -141,6 +184,27 @@ app_ui <- function(request) {
           tabItem(
             tabName = "method_metadata",
             mod_method_metadata_ui("method_metadata")
+          ),
+# Tab: Visualization ------------------------------------------------------
+          tabItem(
+            tabName = "vis_heatmap",
+            mod_vis_heatmap_ui("vis_heatmap")
+          ),
+          tabItem(
+            tabName = "vis_volcano",
+            mod_vis_volcano_ui("vis_volcano")
+          ),
+          tabItem(
+            tabName = "vis_venn",
+            mod_vis_venn_ui("vis_venn")
+          ),
+          tabItem(
+            tabName = "vis_dot",
+            mod_vis_dot_ui("vis_dot")
+          ),
+          tabItem(
+            tabName = "vis_circos",
+            mod_vis_circos_ui("vis_circos")
           )
         )
       )

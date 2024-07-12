@@ -184,9 +184,3 @@ mod_imputation_server <- function(id){
     )
   })
 }
-
-## To be copied in the UI
-# mod_imputation_ui("imputation_1")
-
-## To be copied in the server
-# mod_imputation_server("imputation_1")

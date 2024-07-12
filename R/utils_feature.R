@@ -7,7 +7,7 @@
 #' values <- rnorm(100)
 #' calculate_cooks_distance(values)
 calculate_cooks_distance <- function(values) {
-  group <- 1:length(values)  # Dummy grouping
+  group <- 1:length(values) # Dummy grouping
   model <- lm(values ~ group)
   cooks_distance <- cooks.distance(model)
   return(cooks_distance)
@@ -47,26 +47,26 @@ generate_data_with_anomalies <- function(n_samples = 100, n_features = 2000) {
   # Introduce anomalies in specific features
   cli::cli_alert_info("Introducing anomalies in specific features")
   anomalous_features <- data.frame(
-    F1 = rnorm(n_samples, mean = 0, sd = 10),            # High variance
-    F2 = rnorm(n_samples, mean = 50, sd = 1),            # Outliers with high mean
-    F3 = c(rnorm(n_samples - 5), rep(100, 5)),           # Few extreme outliers
-    F4 = c(rnorm(n_samples / 2, mean = 0), rnorm(n_samples / 2, mean = 100)),  # Bimodal distribution
-    F5 = rexp(n_samples, rate = 1/0.1),                   # Exponential distribution
-    F6 = rnorm(n_samples, mean = 0, sd = 15),            # Another high variance
-    F7 = rnorm(n_samples, mean = 30, sd = 2),            # Another outlier with high mean
-    F8 = c(rnorm(n_samples - 3), rep(80, 3)),            # Few extreme outliers
+    F1 = rnorm(n_samples, mean = 0, sd = 10), # High variance
+    F2 = rnorm(n_samples, mean = 50, sd = 1), # Outliers with high mean
+    F3 = c(rnorm(n_samples - 5), rep(100, 5)), # Few extreme outliers
+    F4 = c(rnorm(n_samples / 2, mean = 0), rnorm(n_samples / 2, mean = 100)), # Bimodal distribution
+    F5 = rexp(n_samples, rate = 1 / 0.1), # Exponential distribution
+    F6 = rnorm(n_samples, mean = 0, sd = 15), # Another high variance
+    F7 = rnorm(n_samples, mean = 30, sd = 2), # Another outlier with high mean
+    F8 = c(rnorm(n_samples - 3), rep(80, 3)), # Few extreme outliers
     F9 = c(rnorm(n_samples / 2, mean = -50), rnorm(n_samples / 2, mean = 50)), # Another bimodal
-    F10 = rexp(n_samples, rate = 1/0.2),                   # Another exponential distribution
-    F11 = rnorm(n_samples, mean = 0, sd = 20),            # Another high variance
-    F12 = rnorm(n_samples, mean = 25, sd = 2.5),          # Another outlier with high mean
-    F13 = c(rnorm(n_samples - 2), rep(90, 2)),            # Few extreme outliers
+    F10 = rexp(n_samples, rate = 1 / 0.2), # Another exponential distribution
+    F11 = rnorm(n_samples, mean = 0, sd = 20), # Another high variance
+    F12 = rnorm(n_samples, mean = 25, sd = 2.5), # Another outlier with high mean
+    F13 = c(rnorm(n_samples - 2), rep(90, 2)), # Few extreme outliers
     F14 = c(rnorm(n_samples / 2, mean = -30), rnorm(n_samples / 2, mean = 60)), # Another bimodal
-    F15 = rexp(n_samples, rate = 1/0.3),                   # Another exponential distribution
-    F16 = rnorm(n_samples, mean = 0, sd = 5),             # Another high variance
-    F17 = rnorm(n_samples, mean = 60, sd = 1.5),          # Another outlier with high mean
-    F18 = c(rnorm(n_samples - 4), rep(70, 4)),            # Few extreme outliers
+    F15 = rexp(n_samples, rate = 1 / 0.3), # Another exponential distribution
+    F16 = rnorm(n_samples, mean = 0, sd = 5), # Another high variance
+    F17 = rnorm(n_samples, mean = 60, sd = 1.5), # Another outlier with high mean
+    F18 = c(rnorm(n_samples - 4), rep(70, 4)), # Few extreme outliers
     F19 = c(rnorm(n_samples / 2, mean = -60), rnorm(n_samples / 2, mean = 40)), # Another bimodal
-    F20 = rexp(n_samples, rate = 1/0.4)                   # Another exponential distribution
+    F20 = rexp(n_samples, rate = 1 / 0.4) # Another exponential distribution
   )
 
   # Combine normal and anomalous data
@@ -88,9 +88,12 @@ generate_data_with_anomalies <- function(n_samples = 100, n_features = 2000) {
 #' @slot thresholds The list of thresholds for anomaly detection.
 #' @export
 setClass("OmicsData",
-         slots = c(data = "data.frame",
-                   anomaly_measures = "data.frame",
-                   thresholds = "list"))
+  slots = c(
+    data = "data.frame",
+    anomaly_measures = "data.frame",
+    thresholds = "list"
+  )
+)
 
 #' Constructor for OmicsData
 #'
@@ -175,12 +178,6 @@ setGeneric("calculate_measures", function(object) standardGeneric("calculate_mea
 #' @import dplyr
 setMethod("calculate_measures", "OmicsData", function(object) {
   cli::cli_h1("Calculating Measures for Each Feature")
-  progress_bar <- progress::progress_bar$new(
-    format = "Calculating [:bar] :percent in :elapsed",
-    total = ncol(object@data) - 1,
-    clear = FALSE
-  )
-
   data <- object@data
   anomaly_measures <- object@anomaly_measures
   for (i in 1:(ncol(data) - 1)) {
@@ -190,7 +187,6 @@ setMethod("calculate_measures", "OmicsData", function(object) {
     anomaly_measures$Shapiro_p[i] <- shapiro.test(feature_values)$p.value
     anomaly_measures$Cooks_Distance[i] <- max(calculate_cooks_distance(feature_values))
     anomaly_measures$LOF[i] <- max(calculate_lof(feature_values))
-    progress_bar$tick()
   }
   object@anomaly_measures <- anomaly_measures
   cli::cli_alert_success("Measures calculation complete")

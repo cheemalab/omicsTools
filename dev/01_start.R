@@ -27,7 +27,7 @@ golem::fill_desc(
   author_email = "liyaoxiang@outlook.com", # Your Email
   author_orcid = "0000-0001-9200-1016",
   pkg_version = "1.1.4",
-  repo_url = "https://github.com/YaoxiangLi/omicsTools" # The URL of the GitHub Repo (optional)
+  repo_url = "https://github.com/cheemalab/omicsTools" # The URL of the GitHub Repo (optional)
 )
 
 p <- c(person(given = "Yaoxiang",
@@ -74,26 +74,38 @@ usethis::use_package("readr")
 usethis::use_package("tibble")
 usethis::use_package("bs4Dash")
 usethis::use_package("shinymanager")
-usethis::use_package("matrixStats")
-usethis::use_package("tidyr")
-usethis::use_package("pcva")
-usethis::use_package("ggplot2")
+usethis::use_package("shinyWidgets")
 
-usethis::use_package("spelling", type = "Suggests")
+usethis::use_package("matrixStats")
+usethis::use_package("ggplot2")
+usethis::use_package("pheatmap")
+usethis::use_package("ggvenn")
+usethis::use_package("ggrepel")
+usethis::use_package("RColorBrewer")
+
+
+
+usethis::use_package("zip")
+usethis::use_package("stringr")
+usethis::use_package("viridis")
+
+
+
 usethis::use_pipe(export = TRUE)
 
 
-## dependencies for utils_features
 usethis::use_package("moments")
 usethis::use_package("outliers")
 usethis::use_package("MASS")
-usethis::use_package("dplyr")
 usethis::use_package("dbscan")
-usethis::use_package("ggplot2")
 usethis::use_package("UpSetR")
 usethis::use_package("tidyr")
 usethis::use_package("cli")
-usethis::use_package("progress") # consider remove this
+usethis::use_package("purrr")
+usethis::use_package("rlang")
+usethis::use_package("methods")
+
+
 
 ## Use git ----
 usethis::use_git()

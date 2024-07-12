@@ -174,9 +174,3 @@ mod_qc_rlsc_server <- function(id){
 
   })
 }
-
-## To be copied in the UI
-# mod_qc_rlsc_ui("qc_rlsc_1")
-
-## To be copied in the server
-# mod_qc_rlsc_server("qc_rlsc_1")

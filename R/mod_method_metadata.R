@@ -86,9 +86,3 @@ mod_method_metadata_server <- function(id){
 
   })
 }
-
-## To be copied in the UI
-# mod_method_metadata_ui("method_metadata_1")
-
-## To be copied in the server
-# mod_method_metadata_server("method_metadata_1")

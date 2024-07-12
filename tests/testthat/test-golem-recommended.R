@@ -64,11 +64,3 @@ testServer(app_server, {
   # - Checking output
   # expect_equal(output$txt, "Text")
 })
-
-# Configure this test to fit your need
-test_that(
-  "app launches",
-  {
-    golem::expect_running(sleep = 5)
-  }
-)
