@@ -1,0 +1,7 @@
+sample_id,group,feature_a,feature_b,feature_c
+QC_1,QC,10,20,5
+S_1,Case,,22,6
+QC_2,QC,12,24,7
+S_2,Control,14,26,8
+QC_3,QC,16,28,9
+S_3,Case,18,30,10

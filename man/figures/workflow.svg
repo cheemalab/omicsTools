@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="740" viewBox="0 0 1600 740" role="img" aria-labelledby="title desc">
+<title id="title">omicsTools workflow</title>
+<desc id="desc">A horizontal metabolomics workflow with grouped data processing, quality control, annotation and analysis, and reporting stages. Created by Yaoxiang Li.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#36515b"/></marker></defs>
+<rect width="1600" height="740" fill="white"/>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#123b50}.label{font-size:20px}.detail{font-size:14px;fill:#4b5f69}.arrow{fill:none;stroke:#36515b;stroke-width:2;stroke-linejoin:round;marker-end:url(#arrow)}</style>
+
+<path d="M25 28 H580 L615 60 L580 92 H25 L60 60 Z" fill="#87c4ba" stroke="#8097a3" stroke-width="2.5"/>
+<text x="328.0" y="68" text-anchor="middle" font-size="25" font-weight="700">Data processing</text>
+<path d="M625 28 H880 L915 60 L880 92 H625 L660 60 Z" fill="#b6c6d8" stroke="#8097a3" stroke-width="2.5"/>
+<text x="778.0" y="68" text-anchor="middle" font-size="25" font-weight="700">Quality control</text>
+<path d="M925 28 H1240 L1275 60 L1240 92 H925 L960 60 Z" fill="#e0c795" stroke="#8097a3" stroke-width="2.5"/>
+<text x="1108.0" y="68" text-anchor="middle" font-size="25" font-weight="700">Annotation &amp; analysis</text>
+<path d="M1285 28 H1540 L1575 60 L1540 92 H1285 L1320 60 Z" fill="#c8bbd8" stroke="#8097a3" stroke-width="2.5"/>
+<text x="1438.0" y="68" text-anchor="middle" font-size="25" font-weight="700">Reporting</text>
+<rect x="280" y="130" width="295" height="480" rx="14" fill="#f2f7f5" stroke="#b5cbc6" stroke-width="2"/>
+<text x="427" y="158" text-anchor="middle" class="detail">Table preparation</text>
+<path class="arrow" d="M205 215 H292"/>
+<path class="arrow" d="M205 335 H250 V215 H292"/>
+<path class="arrow" d="M205 455 H250 V215 H292"/>
+<path class="arrow" d="M417 250 V272"/>
+<path class="arrow" d="M417 350 V372"/>
+<path class="arrow" d="M417 450 V472"/>
+<path class="arrow" d="M535 515 H605 V215 H642"/>
+<path class="arrow" d="M767 250 V312"/>
+<path class="arrow" d="M767 390 V452"/>
+<path class="arrow" d="M885 495 H920 V215 H952"/>
+<path class="arrow" d="M885 495 H920 V355 H952"/>
+<path class="arrow" d="M1195 215 H1220 V435 H1150 V452"/>
+<path class="arrow" d="M1077 390 V452"/>
+<path class="arrow" d="M1195 495 H1255 V195 H1317"/>
+<path class="arrow" d="M1195 495 H1255 V300 H1317"/>
+<path class="arrow" d="M1195 495 H1255 V405 H1317"/>
+<path class="arrow" d="M1195 495 H1255 V510 H1317"/>
+<path class="arrow" d="M1195 495 H1255 V615 H1317"/>
+<rect x="35" y="180" width="170" height="70" rx="0" fill="#e8f1ed" stroke="#64877d" stroke-width="2.2"/>
+<text x="120.0" y="211.0" text-anchor="middle" class="label">Intensity</text>
+<text x="120.0" y="234.0" text-anchor="middle" class="label">table</text>
+<rect x="35" y="300" width="170" height="70" rx="0" fill="#e8f1ed" stroke="#64877d" stroke-width="2.2"/>
+<text x="120.0" y="331.0" text-anchor="middle" class="label">Sample</text>
+<text x="120.0" y="354.0" text-anchor="middle" class="label">metadata</text>
+<rect x="35" y="420" width="170" height="70" rx="0" fill="#e8f1ed" stroke="#64877d" stroke-width="2.2"/>
+<text x="120.0" y="451.0" text-anchor="middle" class="label">Feature</text>
+<text x="120.0" y="474.0" text-anchor="middle" class="label">metadata</text>
+<rect x="300" y="180" width="235" height="70" rx="12" fill="#edf6f2" stroke="#8fb5a9" stroke-width="2.2"/>
+<text x="417.5" y="213.5" text-anchor="middle" class="label">Validate inputs</text>
+<text x="417.5" y="236.5" text-anchor="middle" class="detail">IDs and columns</text>
+<rect x="300" y="280" width="235" height="70" rx="12" fill="#edf6f2" stroke="#8fb5a9" stroke-width="2.2"/>
+<text x="417.5" y="313.5" text-anchor="middle" class="label">Blank filter</text>
+<text x="417.5" y="336.5" text-anchor="middle" class="detail">Optional background removal</text>
+<rect x="300" y="380" width="235" height="70" rx="12" fill="#edf6f2" stroke="#8fb5a9" stroke-width="2.2"/>
+<text x="417.5" y="413.5" text-anchor="middle" class="label">Filter missing values</text>
+<text x="417.5" y="436.5" text-anchor="middle" class="detail">Impute remaining values</text>
+<rect x="300" y="480" width="235" height="70" rx="12" fill="#edf6f2" stroke="#8fb5a9" stroke-width="2.2"/>
+<text x="417.5" y="513.5" text-anchor="middle" class="label">Normalize</text>
+<text x="417.5" y="536.5" text-anchor="middle" class="detail">QC-RLSC / PQN</text>
+<rect x="650" y="180" width="235" height="70" rx="12" fill="#edf1f7" stroke="#9aadc4" stroke-width="2.2"/>
+<text x="767.5" y="213.5" text-anchor="middle" class="label">QC filtering</text>
+<text x="767.5" y="236.5" text-anchor="middle" class="detail">QC relative variability</text>
+<rect x="650" y="320" width="235" height="70" rx="12" fill="#edf1f7" stroke="#9aadc4" stroke-width="2.2"/>
+<text x="767.5" y="353.5" text-anchor="middle" class="label">Review quality</text>
+<text x="767.5" y="376.5" text-anchor="middle" class="detail">PCA / sample outliers</text>
+<rect x="650" y="460" width="235" height="70" rx="12" fill="#edf1f7" stroke="#9aadc4" stroke-width="2.2"/>
+<text x="767.5" y="491.0" text-anchor="middle" class="label">Processed feature</text>
+<text x="767.5" y="514.0" text-anchor="middle" class="label">table</text>
+<rect x="960" y="180" width="235" height="70" rx="12" fill="#fbf4e5" stroke="#c6b087" stroke-width="2.2"/>
+<text x="1077.5" y="213.5" text-anchor="middle" class="label">MS1 annotation</text>
+<text x="1077.5" y="236.5" text-anchor="middle" class="detail">Database search</text>
+<rect x="960" y="320" width="235" height="70" rx="12" fill="#fbf4e5" stroke="#c6b087" stroke-width="2.2"/>
+<text x="1077.5" y="353.5" text-anchor="middle" class="label">Compare groups</text>
+<text x="1077.5" y="376.5" text-anchor="middle" class="detail">Fold change / test / FDR</text>
+<rect x="960" y="460" width="235" height="70" rx="12" fill="#fbf4e5" stroke="#c6b087" stroke-width="2.2"/>
+<text x="1077.5" y="493.5" text-anchor="middle" class="label">Generate outputs</text>
+<text x="1077.5" y="516.5" text-anchor="middle" class="detail">Results and figures</text>
+<rect x="1325" y="160" width="235" height="70" rx="0" fill="#f2eef7" stroke="#a498b7" stroke-width="2.2"/>
+<text x="1442.5" y="191.0" text-anchor="middle" class="label">Feature &amp; sample</text>
+<text x="1442.5" y="214.0" text-anchor="middle" class="label">tables</text>
+<rect x="1325" y="265" width="235" height="70" rx="0" fill="#f2eef7" stroke="#a498b7" stroke-width="2.2"/>
+<text x="1442.5" y="296.0" text-anchor="middle" class="label">Comparison &amp; MS1</text>
+<text x="1442.5" y="319.0" text-anchor="middle" class="label">annotation tables</text>
+<rect x="1325" y="370" width="235" height="70" rx="0" fill="#f2eef7" stroke="#a498b7" stroke-width="2.2"/>
+<text x="1442.5" y="401.0" text-anchor="middle" class="label">QC report</text>
+<text x="1442.5" y="424.0" text-anchor="middle" class="label">HTML</text>
+<rect x="1325" y="475" width="235" height="70" rx="0" fill="#f2eef7" stroke="#a498b7" stroke-width="2.2"/>
+<text x="1442.5" y="506.0" text-anchor="middle" class="label">Processing log</text>
+<text x="1442.5" y="529.0" text-anchor="middle" class="label">and settings JSON</text>
+<rect x="1325" y="580" width="235" height="70" rx="0" fill="#f2eef7" stroke="#a498b7" stroke-width="2.2"/>
+<text x="1442.5" y="611.0" text-anchor="middle" class="label">Figures</text>
+<text x="1442.5" y="634.0" text-anchor="middle" class="label">and results ZIP</text>
+<text x="1570" y="718" text-anchor="end" font-size="10" fill="#6b7b85">Created by Yaoxiang Li</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="440" viewBox="0 0 380 440" role="img" aria-labelledby="title desc">
+<title id="title">omicsTools</title>
+<desc id="desc">omicsTools hex logo. Created by Yaoxiang Li.</desc>
+<path d="M190 12 L370 116 L370 324 L190 428 L10 324 L10 116 Z" fill="#123b50"/>
+<path d="M190 27 L357 123 L357 317 L190 413 L23 317 L23 123 Z" fill="none" stroke="#63c8bd" stroke-width="2"/>
+<g stroke="#63c8bd" stroke-width="4" fill="none" stroke-linecap="round">
+<path d="M98 176 H190 L253 129 M190 176 L253 223"/>
+</g>
+<g fill="#63c8bd"><circle cx="98" cy="176" r="13"/><circle cx="190" cy="176" r="13"/><circle cx="253" cy="129" r="13"/><circle cx="253" cy="223" r="13"/></g>
+<text x="190" y="300" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="43" font-weight="600" fill="#ffffff">omicsTools</text>
+<defs><path id="credit-edge" d="M38 321 L171 398"/></defs>
+<text font-family="Arial,Helvetica,sans-serif" font-size="7.5" letter-spacing=".35" fill="#88aaa7"><textPath href="#credit-edge" startOffset="50%" text-anchor="middle">Yaoxiang Li</textPath></text>
+</svg>

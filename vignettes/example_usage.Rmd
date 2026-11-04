@@ -1,0 +1,32 @@
+---
+title: "omicsTools Workflow"
+author: "Yaoxiang Li"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{omicsTools Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This example runs a feature table through validation, preprocessing,
+group comparison, and report export.
+
+```{r}
+library(omicsTools)
+data <- data.frame(
+  sample_id = paste0("S", 1:6),
+  group = rep(c("control", "case"), each = 3),
+  feature_a = c(1, 2, 3, 2, 4, 6),
+  feature_b = c(3, 4, 2, 4, 2, 3)
+)
+result <- process_omics_data(
+  data, group_col = "group", reference = "control", comparison = "case"
+)
+result$comparison
+```
+
+```{r, eval=FALSE}
+export_omics_results(result, "results")
+```
+
+Created by Yaoxiang Li.

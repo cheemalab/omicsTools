@@ -1,0 +1,7 @@
+Sample Name	Sample ID	Sample Type	feature_a	feature_b
+Run01	Pooled QC 1	QC	10	20
+Run02	Sample 1	Sample	10	19
+Run03	NIST 1	QC	10	20
+Run04	Pooled QC 2	QC	10	20
+Run05	Sample 2	Sample	10	21
+Run06	NIST 2	QC	10	20
